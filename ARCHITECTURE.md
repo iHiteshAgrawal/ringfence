@@ -282,6 +282,31 @@ The ablation model also needed **735 boosting iterations to the ring model's
 
 ---
 
+### 6.2 What the honesty constraints cost
+
+Claiming a leakage boundary is worth nothing unless the gap is measured. Each
+guarantee is broken in turn, changing nothing else — `scripts/leakage_ablation.py`
+(or `ringfence ablate`) reproduces this.
+
+| Variant | Assumes | PR-AUC | vs honest | ₹ saved |
+|---|---|---:|---:|---:|
+| **honest** | causal features, 30-day reporting lag *(shipped)* | **0.5986** | — | **18,476,797** |
+| `lag0` | chargebacks known the instant they happen | 0.9691 | +61.9% | 52,814,554 |
+| `whole_frame` | ring aggregates over the entire dataset | 0.9612 | +60.6% | 52,264,200 |
+
+**Either shortcut nearly triples the money figure** — ₹18.5M becomes ₹52.8M —
+and lifts PR-AUC from 0.60 to ~0.96. A submission that made either mistake would
+report a number in that range and believe it.
+
+Those two rows are not results. They are the size of the overstatement avoided.
+
+> **A note on getting this wrong.** The first version of this ablation *replaced*
+> the causal features with whole-frame ones rather than leaking the same feature
+> set. That also dropped the lag-gated fraud-history feature, so the "leaky"
+> variant scored 10.5% **worse** — which proved nothing except that it had lost
+> the 6th most important feature. A leakage test has to vary causality and
+> nothing else. The confounded version is preserved in the git history.
+
 ## 7. Honest limitations
 
 1. **Ring features are 7.9% of model gain**, not a majority. IEEE-CIS's `C*` and
@@ -313,9 +338,10 @@ python scripts/download_data.py     # needs Kaggle credentials
 python scripts/prepare_data.py  --tag main
 python scripts/run_experiment.py --tag main
 python scripts/run_experiment.py --tag noring --data-tag main --no-ring-features
+python scripts/leakage_ablation.py       # measures what the honesty costs
 python scripts/demo_agent.py --offline   # agent layer, no API key needed
 python scripts/demo_agent.py             # needs OPENROUTER_API_KEY in .env
-pytest                                   # 56 tests
+pytest                                   # 57 tests
 ```
 
 Preparation and training are separate processes deliberately: run together they

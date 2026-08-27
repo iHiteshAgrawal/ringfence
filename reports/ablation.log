@@ -1,0 +1,276 @@
+─────────────────────────────── preparing honest ───────────────────────────────
+[19:37:26] reading train_transaction.csv                              load.py:68
+[19:37:37]   590,540 rows x 394 cols, 913 MB                          load.py:70
+[19:37:38] reading train_identity.csv                                 load.py:72
+             merged -> 590,540 x 434, 979 MB                          load.py:78
+[19:37:38] resolving client entities                              pipeline.py:83
+[19:37:46] assigning rings causally                               pipeline.py:86
+[19:37:50] causal rings: 7,865 multi-client rings, largest=50   streaming.py:169
+           (0.02% of clients)                                                   
+[19:37:50] building causal ring features (label lag 30d)         pipeline.py:104
+[19:38:23] temporal split @ TransactionDT=12,192,854 (embargo 7d)    load.py:105
+             train: 453,779 rows, fraud rate 3.5246%                 load.py:111
+             test: 118,108 rows, fraud rate 3.4409%                  load.py:111
+             embargoed away: 18,653 rows                             load.py:113
+[19:38:31] 446 features                                          pipeline.py:113
+[19:38:39] wrote train_main.parquet: 453,779 x 450 (81 MB)    prepare_data.py:75
+[19:38:40] wrote test_main.parquet: 118,108 x 450 (22 MB)     prepare_data.py:75
+           wrote meta_main.json                               prepare_data.py:82
+─────────────────────────────── training honest ────────────────────────────────
+──────────────────────────────── load prepared ─────────────────────────────────
+[19:38:44] V-block reduction: 202 columns dropped, 244      run_experiment.py:71
+           features remain                                                      
+[19:38:46] train (453779, 246)  test (118108, 246)          run_experiment.py:83
+──────────────────────────────────── train ─────────────────────────────────────
+[19:38:46] valid split @ 8,996,705: train=363,023 valid=90,756      train.py:129
+           (fraud 3.377% / 4.114%)                                              
+[19:38:47] training on 363,023 x 244 (31 categorical)               train.py:157
+[200]	valid's average_precision: 0.678832
+[19:39:25] valid PR-AUC 0.6805 @ iter 233                           train.py:172
+           fitted sigmoid calibrator (ranking preserved); mean p    train.py:182
+           0.0411 vs actual 0.0411                                              
+─────────────────────────────────── evaluate ───────────────────────────────────
+
+Held-out test: 118,108 transactions, 3.441% fraud
+  PR-AUC   0.5986   (17.4x baseline)
+  ROC-AUC  0.9307   <- the flattering one
+
+precision@k
+   k  precision@k  recall@k  frauds_caught
+ 100       0.9800  0.024114             98
+ 500       0.9340  0.114911            467
+1000       0.9050  0.222687            905
+5000       0.4938  0.607530           2469
+
+recall at fixed false-positive budget
+ fp_budget  threshold   recall  precision  false_positives
+     0.001   0.869256 0.261319   0.903061              114
+     0.005   0.524692 0.455955   0.764754              570
+     0.010   0.347728 0.523622   0.651163             1140
+     0.050   0.090226 0.710630   0.336205             5702
+
+cost-optimal operating point
+  threshold 0.4000  flag rate 2.513%
+  precision 0.693  recall 0.506
+  net saving  Rs 18,476,797
+  vs baseline loss Rs 59,770,222 (30.9% recovered)
+
+ring/entity features = 7.9% of top-50 gain
+              feature  gain_pct  is_ring_feature
+                 V200  6.071232            False
+                  C14  4.329587            False
+                   C8  4.107212            False
+                  C13  4.059397            False
+           DeviceInfo  3.764242            False
+ring_known_fraud_rate  3.755717             True
+                   C1  3.724987            False
+                   C4  3.396678            False
+                card2  2.344853            False
+                   D2  2.302263            False
+                addr1  2.288583            False
+        R_emaildomain  2.092891            False
+                 V189  1.941658            False
+       TransactionAmt  1.902322            False
+        P_emaildomain  1.766475            False
+                 V283  1.705818            False
+                card1  1.666885            False
+                 V244  1.491658            False
+                   D3  1.485548            False
+                  D15  1.402703            False
+
+wrote /Users/main/Documents/razorpay-buildathon/reports/results_main.json  
+(43.5s total)
+[19:39:27] saved booster ->                                         train.py:115
+           /Users/main/Documents/razorpay-buildathon/models/lgbm_ma             
+           in.txt                                                               
+──────────────────────────────── preparing lag0 ────────────────────────────────
+[19:39:29] reading train_transaction.csv                              load.py:68
+[19:39:40]   590,540 rows x 394 cols, 913 MB                          load.py:70
+           reading train_identity.csv                                 load.py:72
+[19:39:41]   merged -> 590,540 x 434, 979 MB                          load.py:78
+[19:39:41] resolving client entities                              pipeline.py:83
+[19:39:48] assigning rings causally                               pipeline.py:86
+[19:39:52] causal rings: 7,865 multi-client rings, largest=50   streaming.py:169
+           (0.02% of clients)                                                   
+[19:39:52] building causal ring features (label lag 0d)          pipeline.py:104
+[19:40:13] temporal split @ TransactionDT=12,192,854 (embargo 7d)    load.py:105
+             train: 453,779 rows, fraud rate 3.5246%                 load.py:111
+             test: 118,108 rows, fraud rate 3.4409%                  load.py:111
+             embargoed away: 18,653 rows                             load.py:113
+[19:40:15] 446 features                                          pipeline.py:113
+[19:40:20] wrote train_main_lag0.parquet: 453,779 x 450 (81   prepare_data.py:75
+           MB)                                                                  
+[19:40:22] wrote test_main_lag0.parquet: 118,108 x 450 (22    prepare_data.py:75
+           MB)                                                                  
+           wrote meta_main_lag0.json                          prepare_data.py:82
+──────────────────────────────── training lag0 ─────────────────────────────────
+──────────────────────────────── load prepared ─────────────────────────────────
+[19:40:25] train (453779, 448)  test (118108, 448)          run_experiment.py:83
+──────────────────────────────────── train ─────────────────────────────────────
+[19:40:25] valid split @ 8,996,705: train=363,023 valid=90,756      train.py:129
+           (fraud 3.377% / 4.114%)                                              
+[19:40:26] training on 363,023 x 446 (31 categorical)               train.py:157
+[200]	valid's average_precision: 0.974376
+[400]	valid's average_precision: 0.974922
+[19:41:09] valid PR-AUC 0.9750 @ iter 378                           train.py:172
+           fitted sigmoid calibrator (ranking preserved); mean p    train.py:182
+           0.0411 vs actual 0.0411                                              
+─────────────────────────────────── evaluate ───────────────────────────────────
+
+Held-out test: 118,108 transactions, 3.441% fraud
+  PR-AUC   0.9691   (28.2x baseline)
+  ROC-AUC  0.9986   <- the flattering one
+
+precision@k
+   k  precision@k  recall@k  frauds_caught
+ 100       1.0000  0.024606            100
+ 500       1.0000  0.123031            500
+1000       1.0000  0.246063           1000
+5000       0.7764  0.955217           3882
+
+recall at fixed false-positive budget
+ fp_budget  threshold   recall  precision  false_positives
+     0.001   0.728109 0.818652   0.966870              114
+     0.005   0.293833 0.921506   0.867903              570
+     0.010   0.139735 0.955955   0.773134             1140
+     0.050   0.004584 0.999016   0.415898             5702
+
+cost-optimal operating point
+  threshold 0.3509  flag rate 3.518%
+  precision 0.891  recall 0.911
+  net saving  Rs 52,814,554
+  vs baseline loss Rs 59,770,222 (88.4% recovered)
+
+ring/entity features = 70.4% of top-50 gain
+                feature  gain_pct  is_ring_feature
+ring_known_prior_frauds 37.400246             True
+  ring_known_fraud_rate 22.623273             True
+      ring_prior_amt_cv  4.331641             True
+                   V257  3.089976            False
+          ring_prior_tx  2.122153             True
+                   V258  2.086473            False
+                    C14  1.446235            False
+          ring_age_days  1.248555             True
+                   V307  1.022828            False
+                   V187  0.820761            False
+                    C13  0.791040            False
+                     D2  0.782920            False
+   ring_secs_since_prev  0.737102             True
+                     C1  0.729975            False
+         TransactionAmt  0.679253            False
+             DeviceInfo  0.675924            False
+                   V294  0.658324            False
+                     C8  0.610884            False
+                    C11  0.608347            False
+     ring_prior_amt_sum  0.545314             True
+
+wrote /Users/main/Documents/razorpay-buildathon/reports/results_main_lag0.json  
+(47.1s total)
+[19:41:11] saved booster ->                                         train.py:115
+           /Users/main/Documents/razorpay-buildathon/models/lgbm_ma             
+           in_lag0.txt                                                          
+──────────────────────────── preparing whole_frame ─────────────────────────────
+[19:41:12] reading train_transaction.csv                              load.py:68
+[19:41:26]   590,540 rows x 394 cols, 913 MB                          load.py:70
+           reading train_identity.csv                                 load.py:72
+[19:41:27]   merged -> 590,540 x 434, 979 MB                          load.py:78
+[19:41:27] resolving client entities                              pipeline.py:83
+[19:41:34] assigning rings causally                               pipeline.py:86
+[19:41:37] causal rings: 7,865 multi-client rings, largest=50   streaming.py:169
+           (0.02% of clients)                                                   
+[19:41:37] LEAKY MODE: whole-frame ring aggregates                pipeline.py:96
+[19:41:38] temporal split @ TransactionDT=12,192,854 (embargo 7d)    load.py:105
+             train: 453,779 rows, fraud rate 3.5246%                 load.py:111
+             test: 118,108 rows, fraud rate 3.4409%                  load.py:111
+             embargoed away: 18,653 rows                             load.py:113
+[19:41:41] 446 features                                          pipeline.py:113
+[19:41:46] wrote train_main_whole_frame.parquet: 453,779 x    prepare_data.py:75
+           450 (78 MB)                                                          
+[19:41:47] wrote test_main_whole_frame.parquet: 118,108 x 450 prepare_data.py:75
+           (21 MB)                                                              
+           wrote meta_main_whole_frame.json                   prepare_data.py:82
+───────────────────────────── training whole_frame ─────────────────────────────
+──────────────────────────────── load prepared ─────────────────────────────────
+[19:41:51] train (453779, 448)  test (118108, 448)          run_experiment.py:83
+──────────────────────────────────── train ─────────────────────────────────────
+[19:41:51] valid split @ 8,996,705: train=363,023 valid=90,756      train.py:129
+           (fraud 3.377% / 4.114%)                                              
+[19:41:52] training on 363,023 x 446 (31 categorical)               train.py:157
+[200]	valid's average_precision: 0.966985
+[19:42:30] valid PR-AUC 0.9670 @ iter 189                           train.py:172
+           fitted sigmoid calibrator (ranking preserved); mean p    train.py:182
+           0.0411 vs actual 0.0411                                              
+─────────────────────────────────── evaluate ───────────────────────────────────
+
+Held-out test: 118,108 transactions, 3.441% fraud
+  PR-AUC   0.9612   (27.9x baseline)
+  ROC-AUC  0.9982   <- the flattering one
+
+precision@k
+   k  precision@k  recall@k  frauds_caught
+ 100       1.0000  0.024606            100
+ 500       1.0000  0.123031            500
+1000       1.0000  0.246063           1000
+5000       0.7706  0.948081           3853
+
+recall at fixed false-positive budget
+ fp_budget  threshold   recall  precision  false_positives
+     0.001   0.812364 0.768455   0.964782              114
+     0.005   0.353145 0.908465   0.866260              570
+     0.010   0.167136 0.948081   0.771680             1140
+     0.050   0.007248 0.997293   0.415479             5702
+
+cost-optimal operating point
+  threshold 0.3918  flag rate 3.518%
+  precision 0.881  recall 0.900
+  net saving  Rs 52,264,200
+  vs baseline loss Rs 59,770,222 (87.4% recovered)
+
+ring/entity features = 70.5% of top-50 gain
+                feature  gain_pct  is_ring_feature
+  ring_known_fraud_rate 61.683308             True
+ring_known_prior_frauds  5.760629             True
+                   V257  3.374069            False
+                   V258  2.208404            False
+                    C14  1.487746            False
+                     C1  1.099710            False
+                    C13  0.987728            False
+                   V187  0.872612            False
+                   V294  0.771070            False
+                     D2  0.765839            False
+             DeviceInfo  0.726461            False
+         TransactionAmt  0.711841            False
+                     C8  0.704122            False
+          ring_n_pemail  0.598082             True
+                    C11  0.581818            False
+          P_emaildomain  0.487014            False
+                  card1  0.432377            False
+          R_emaildomain  0.419890            False
+                     C2  0.397757            False
+                  addr1  0.379255            False
+
+wrote 
+/Users/main/Documents/razorpay-buildathon/reports/results_main_whole_frame.json 
+(41.1s total)
+[19:42:31] saved booster ->                                         train.py:115
+           /Users/main/Documents/razorpay-buildathon/models/lgbm_ma             
+           in_whole_frame.txt                                                   
+
+                       What each honesty constraint costs                       
+┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ variant     ┃ what it assumes              ┃ PR-AUC ┃ vs honest ┃   Rs saved ┃
+┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━┩
+│ honest      │ causal features, 30d         │ 0.5986 │         - │ 18,476,797 │
+│             │ reporting lag (shipped)      │        │           │            │
+│ lag0        │ chargebacks known instantly  │ 0.9691 │    +61.9% │ 52,814,554 │
+│             │ (impossible)                 │        │           │            │
+│ whole_frame │ ring aggregates over the     │ 0.9612 │    +60.6% │ 52,264,200 │
+│             │ whole dataset (classic leak) │        │           │            │
+└─────────────┴──────────────────────────────┴────────┴───────────┴────────────┘
+
+Reading this table. A variant scoring above `honest` is not better -- it is the 
+amount by which a submission making that standard mistake would overstate 
+itself. A variant scoring BELOW honest means the shortcut also cost it something
+real, and the comparison is confounded rather than clean.
+wrote 
+/Users/main/Documents/razorpay-buildathon/reports/leakage_ablation_main.json

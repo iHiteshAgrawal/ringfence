@@ -37,6 +37,8 @@ def main() -> int:
     ap.add_argument("--max-shared-clients", type=int, default=20)
     ap.add_argument("--max-ring-clients", type=int, default=50)
     ap.add_argument("--sample", type=int, default=0)
+    ap.add_argument("--leaky", action="store_true",
+                    help="deliberately break causality; for the ablation only")
     ap.add_argument("--tag", type=str, default="main")
     args = ap.parse_args()
 
@@ -49,6 +51,7 @@ def main() -> int:
         df,
         max_shared_clients=args.max_shared_clients,
         label_lag_days=args.label_lag_days,
+        leaky_whole_frame=args.leaky,
     )
     del df
     gc.collect()

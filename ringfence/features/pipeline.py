@@ -22,12 +22,26 @@ from rich.console import Console
 
 from ringfence import config
 from ringfence.data.load import add_time_features, temporal_split
+from ringfence.entity.graph import ring_features as whole_frame_ring_features
 from ringfence.entity.resolve import resolve
 from ringfence.entity.streaming import assign_rings_causally
-from ringfence.features.build import DROP_ALWAYS
 from ringfence.features.causal import DEFAULT_LABEL_LAG_DAYS, add_causal_ring_features
 
 console = Console()
+
+# Never fed to the model: identifiers, the target, and the raw time axis (it
+# trends, and the test period is strictly later, so the model would learn
+# "this is the late period" rather than anything about fraud).
+DROP_ALWAYS = {
+    config.ID_COL,
+    config.TARGET,
+    config.TIME_COL,
+    "client_id",
+    "ring_id",
+    "_card_anchor",
+    "_ring_truth",
+    "_day",
+}
 
 
 @dataclass
@@ -69,8 +83,16 @@ def prepare(
     max_shared_clients: int = 20,
     label_lag_days: int = DEFAULT_LABEL_LAG_DAYS,
     include_label_features: bool = True,
+    leaky_whole_frame: bool = False,
 ) -> PreparedData:
-    """Raw merged frame -> split, feature-complete train/test."""
+    """Raw merged frame -> split, feature-complete train/test.
+
+    `leaky_whole_frame=True` deliberately BREAKS the causal guarantee: ring
+    aggregates are computed over the entire dataset at once, so a transaction's
+    features include what its ring did afterwards. This is the standard mistake
+    and it exists here only so `scripts/leakage_ablation.py` can measure how
+    much it inflates the results. Never use it for a reported number.
+    """
     console.log("resolving client entities")
     df = resolve(add_time_features(df))
 
@@ -78,10 +100,26 @@ def prepare(
     ring, ring_diag = assign_rings_causally(df, max_shared_clients=max_shared_clients)
     df["ring_id"] = ring
 
-    console.log(f"building causal ring features (label lag {label_lag_days}d)")
-    df = add_causal_ring_features(
-        df, label_lag_days=label_lag_days, include_label_features=include_label_features
-    )
+    if leaky_whole_frame:
+        # A FAIR test of the leak has to keep the feature SET the same and vary
+        # only its causality. An earlier version simply swapped in whole-frame
+        # aggregates, which also dropped the lag-gated fraud-history feature --
+        # so the leaky variant scored WORSE and proved nothing except that it
+        # had lost the 6th most important feature.
+        console.log("[bold red]LEAKY MODE[/bold red]: whole-frame ring aggregates")
+        df = df.join(whole_frame_ring_features(df), on="ring_id")
+        # The classic mistake in full: ring fraud rate over the entire dataset,
+        # counting the current transaction and everything after it.
+        g = df.groupby("ring_id", observed=True)[config.TARGET]
+        df["ring_known_prior_frauds"] = g.transform("sum").astype("float32")
+        df["ring_known_fraud_rate"] = g.transform("mean").astype("float32")
+    else:
+        console.log(f"building causal ring features (label lag {label_lag_days}d)")
+        df = add_causal_ring_features(
+            df,
+            label_lag_days=label_lag_days,
+            include_label_features=include_label_features,
+        )
 
     train, test = temporal_split(df)
     feature_names = list(to_matrix(train).columns)

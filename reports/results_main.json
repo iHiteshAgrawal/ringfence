@@ -3,11 +3,11 @@
   "args": {
     "rounds": 3000,
     "tag": "main",
-    "data_tag": null,
+    "data_tag": "main",
     "no_ring_features": false,
     "keep_all_v": false
   },
-  "runtime_seconds": 31.9,
+  "runtime_seconds": 43.5,
   "n_train": 453779,
   "n_test": 118108,
   "headline": {

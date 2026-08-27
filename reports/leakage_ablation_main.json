@@ -1,0 +1,23 @@
+{
+  "honest": {
+    "label": "causal features, 30d reporting lag (shipped)",
+    "pr_auc": 0.5986280158791669,
+    "roc_auc": 0.9307007761992401,
+    "net_saving_inr": 18476796.54735756,
+    "precision_at_100": 0.98
+  },
+  "lag0": {
+    "label": "chargebacks known instantly (impossible)",
+    "pr_auc": 0.9691465832405811,
+    "roc_auc": 0.9985558287594206,
+    "net_saving_inr": 52814554.0730052,
+    "precision_at_100": 1.0
+  },
+  "whole_frame": {
+    "label": "ring aggregates over the whole dataset (classic leak)",
+    "pr_auc": 0.9612079748372258,
+    "roc_auc": 0.9981762590526602,
+    "net_saving_inr": 52264199.5036788,
+    "precision_at_100": 1.0
+  }
+}

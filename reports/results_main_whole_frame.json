@@ -1,0 +1,349 @@
+{
+  "tag": "main_whole_frame",
+  "args": {
+    "rounds": 3000,
+    "tag": "main_whole_frame",
+    "data_tag": "main_whole_frame",
+    "no_ring_features": false,
+    "keep_all_v": false
+  },
+  "runtime_seconds": 41.1,
+  "n_train": 453779,
+  "n_test": 118108,
+  "headline": {
+    "n": 118108,
+    "prevalence": 0.034409184813899145,
+    "pr_auc": 0.9612079748372258,
+    "pr_auc_lift_over_baseline": 27.934633733286184,
+    "roc_auc": 0.9981762590526602
+  },
+  "precision_at_k": [
+    {
+      "k": 100,
+      "precision@k": 1.0,
+      "recall@k": 0.024606299212598427,
+      "frauds_caught": 100
+    },
+    {
+      "k": 500,
+      "precision@k": 1.0,
+      "recall@k": 0.12303149606299213,
+      "frauds_caught": 500
+    },
+    {
+      "k": 1000,
+      "precision@k": 1.0,
+      "recall@k": 0.24606299212598426,
+      "frauds_caught": 1000
+    },
+    {
+      "k": 5000,
+      "precision@k": 0.7706,
+      "recall@k": 0.9480807086614174,
+      "frauds_caught": 3853
+    }
+  ],
+  "recall_at_fp_budget": [
+    {
+      "fp_budget": 0.001,
+      "threshold": 0.8123636933348043,
+      "recall": 0.7684547244094488,
+      "precision": 0.9647822057460612,
+      "false_positives": 114
+    },
+    {
+      "fp_budget": 0.005,
+      "threshold": 0.35314509367477503,
+      "recall": 0.9084645669291339,
+      "precision": 0.8662599718442046,
+      "false_positives": 570
+    },
+    {
+      "fp_budget": 0.01,
+      "threshold": 0.16713570405938682,
+      "recall": 0.9480807086614174,
+      "precision": 0.7716803524934909,
+      "false_positives": 1140
+    },
+    {
+      "fp_budget": 0.05,
+      "threshold": 0.007248251551677774,
+      "recall": 0.9972933070866141,
+      "precision": 0.41547924141465914,
+      "false_positives": 5702
+    }
+  ],
+  "optimal": {
+    "threshold": 0.3917885633579274,
+    "flag_rate": 0.035179666068344224,
+    "tp": 3659.0,
+    "fp": 496.0,
+    "fn": 405.0,
+    "precision": 0.8806257521058966,
+    "recall": 0.9003444881889764,
+    "loss_avoided_inr": 54785226.49086189,
+    "fraud_loss_inr": 4984995.048559189,
+    "fp_friction_inr": 2521026.987183094,
+    "review_cost_inr": 0.0,
+    "total_loss_inr": 7506022.035742283,
+    "net_saving_inr": 52264199.5036788
+  },
+  "baseline_loss_inr": 59770221.53942108,
+  "cost_model": {
+    "chargeback_fee_inr": 1500.0,
+    "fraud_loss_rate": 1.0,
+    "gross_margin_rate": 0.25,
+    "churn_multiplier": 2.0,
+    "usd_inr": 88.0,
+    "review_cost_inr": 0.0
+  },
+  "ring_feature_gain_pct": 70.47447220120239,
+  "top_features": [
+    {
+      "feature": "ring_known_fraud_rate",
+      "gain": 514987.0694710016,
+      "split": 874,
+      "gain_pct": 61.68330814415073,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "ring_known_prior_frauds",
+      "gain": 48094.84798383713,
+      "split": 539,
+      "gain_pct": 5.760628769534884,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "V257",
+      "gain": 28169.72501897812,
+      "split": 13,
+      "gain_pct": 3.3740688488868207,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "V258",
+      "gain": 18437.721397161484,
+      "split": 38,
+      "gain_pct": 2.2084042839859173,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "C14",
+      "gain": 12421.024347305298,
+      "split": 183,
+      "gain_pct": 1.4877458439254534,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "C1",
+      "gain": 9181.353056669235,
+      "split": 255,
+      "gain_pct": 1.0997096108772464,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "C13",
+      "gain": 8246.43034863472,
+      "split": 376,
+      "gain_pct": 0.9877279148127316,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "V187",
+      "gain": 7285.343015909195,
+      "split": 10,
+      "gain_pct": 0.8726123136407556,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "V294",
+      "gain": 6437.578825712204,
+      "split": 29,
+      "gain_pct": 0.7710701529196854,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "D2",
+      "gain": 6393.9004291296005,
+      "split": 239,
+      "gain_pct": 0.7658385108933824,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "DeviceInfo",
+      "gain": 6065.138943433762,
+      "split": 247,
+      "gain_pct": 0.726460636709209,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "TransactionAmt",
+      "gain": 5943.081636071205,
+      "split": 649,
+      "gain_pct": 0.7118410492523363,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "C8",
+      "gain": 5878.635114431381,
+      "split": 47,
+      "gain_pct": 0.7041218755317002,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "ring_n_pemail",
+      "gain": 4993.319937109947,
+      "split": 231,
+      "gain_pct": 0.5980819919604362,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "C11",
+      "gain": 4857.53099656105,
+      "split": 149,
+      "gain_pct": 0.5818176786233088,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "P_emaildomain",
+      "gain": 4066.0275584459305,
+      "split": 217,
+      "gain_pct": 0.48701422944047684,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "card1",
+      "gain": 3609.868328332901,
+      "split": 487,
+      "gain_pct": 0.432377109361397,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "R_emaildomain",
+      "gain": 3505.614518880844,
+      "split": 97,
+      "gain_pct": 0.41988996116903854,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "C2",
+      "gain": 3320.8319919109344,
+      "split": 141,
+      "gain_pct": 0.3977573713887788,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "addr1",
+      "gain": 3166.358309149742,
+      "split": 444,
+      "gain_pct": 0.3792550664984675,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "V317",
+      "gain": 3007.281056880951,
+      "split": 53,
+      "gain_pct": 0.3602013625278027,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "ring_n_tx",
+      "gain": 2788.7583236694336,
+      "split": 359,
+      "gain_pct": 0.33402749159346257,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "ring_mean_amt",
+      "gain": 2697.8028786182404,
+      "split": 344,
+      "gain_pct": 0.32313317389681784,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "ring_amt_cv",
+      "gain": 2696.7713294029236,
+      "split": 393,
+      "gain_pct": 0.3230096186235183,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "id_31",
+      "gain": 2643.990127801895,
+      "split": 243,
+      "gain_pct": 0.31668767518925095,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "D15",
+      "gain": 2640.1739542484283,
+      "split": 312,
+      "gain_pct": 0.3162305875783487,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "ring_velocity",
+      "gain": 2615.424080014229,
+      "split": 406,
+      "gain_pct": 0.3132661362174916,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "V268",
+      "gain": 2585.6661138534546,
+      "split": 15,
+      "gain_pct": 0.30970183352864206,
+      "is_ring_feature": false
+    },
+    {
+      "feature": "ring_total_amt",
+      "gain": 2571.761669278145,
+      "split": 357,
+      "gain_pct": 0.30803640891867445,
+      "is_ring_feature": true
+    },
+    {
+      "feature": "ring_span_days",
+      "gain": 2337.459927916527,
+      "split": 342,
+      "gain_pct": 0.2799725848580713,
+      "is_ring_feature": true
+    }
+  ],
+  "ring_diagnostics": {
+    "rings": {
+      "n_clients": 222477,
+      "n_rings_final": 168613,
+      "n_multi_client_rings": 7865,
+      "clients_in_multi_rings": 61729,
+      "largest_ring_clients": 50,
+      "pct_in_largest": 0.02247423329153126,
+      "hub_demotions": {
+        "card1": 1298,
+        "addr1": 76,
+        "P_emaildomain": 57,
+        "R_emaildomain": 52,
+        "DeviceInfo": 232
+      },
+      "edges_made": {
+        "card1": 62379,
+        "addr1": 1274,
+        "P_emaildomain": 370,
+        "R_emaildomain": 319,
+        "DeviceInfo": 5533
+      },
+      "merges_refused_by_size_cap": {
+        "card1": 14142,
+        "addr1": 1195,
+        "P_emaildomain": 1063,
+        "R_emaildomain": 1091,
+        "DeviceInfo": 7800
+      },
+      "max_shared_clients": 20,
+      "max_ring_clients": 50
+    },
+    "label_lag_days": 30
+  },
+  "valid_pr_auc": 0.9670487188031189,
+  "best_iteration": 189
+}
