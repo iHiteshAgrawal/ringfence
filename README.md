@@ -43,16 +43,38 @@ Fraud results are easy to fake by accident. Three deliberate choices:
   PR-AUC, precision@k at realistic review capacity, recall at a fixed FP budget,
   and a rupee cost curve that *selects* the threshold.
 
-## Status
+## Results
 
-Under active development. See [ARCHITECTURE.md](ARCHITECTURE.md).
+On **118,108 held-out transactions**, from a period strictly later than all training data:
+
+| | With rings | Without | Change |
+|---|---:|---:|---:|
+| PR-AUC | **0.5986** | 0.5027 | +19.1% |
+| Recall @ 0.5% FP budget | 0.456 | 0.362 | +26.0% |
+| precision@100 | 0.980 | 1.000 | −2.0% |
+| Money saved | **₹18,476,797** | ₹12,835,072 | **+44.0%** |
+
+Against a ₹59,770,222 baseline loss, the cost-optimal setting recovers **30.9%**
+while flagging 2.51% of traffic. The ring layer is worth ₹5.6M of that.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, the leakage
+boundary, and an honest limitations section.
 
 ## Quickstart
 
 ```bash
 uv venv --python 3.11 && uv pip install -e .
-python scripts/download_data.py    # needs a Kaggle token, see the script docstring
-python scripts/build_dataset.py
+python scripts/download_data.py                  # needs Kaggle credentials
+python scripts/prepare_data.py  --tag main
+python scripts/run_experiment.py --tag main
+pytest                                           # 56 tests
+```
+
+The agent layer runs against real rings from the held-out set:
+
+```bash
+python scripts/demo_agent.py --offline           # no API key needed
+python scripts/demo_agent.py                     # needs OPENROUTER_API_KEY
 ```
 
 ## Scope and safety

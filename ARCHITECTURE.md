@@ -313,7 +313,9 @@ python scripts/download_data.py     # needs Kaggle credentials
 python scripts/prepare_data.py  --tag main
 python scripts/run_experiment.py --tag main
 python scripts/run_experiment.py --tag noring --data-tag main --no-ring-features
-pytest                              # 33 tests
+python scripts/demo_agent.py --offline   # agent layer, no API key needed
+python scripts/demo_agent.py             # needs OPENROUTER_API_KEY in .env
+pytest                                   # 56 tests
 ```
 
 Preparation and training are separate processes deliberately: run together they
@@ -324,19 +326,114 @@ Results land in `reports/results_<tag>.json`.
 
 ---
 
-## 9. Next: the dispute agent
+## 9. The dispute agent
 
-For chargebacks that land anyway. Given a dispute, the agent decides whether the
-case is worth contesting, assembles evidence into Razorpay's schema
-(`shipping_proof`, `billing_proof`, `customer_communication`,
-`proof_of_service`, `access_activity_log`, …) and drafts the ≤1000-character
-`summary`.
+For chargebacks that land anyway. Two components, both drafting only.
 
-**It is wired to `action: "draft"`, never `"submit"`.** A human signs off before
-anything reaches a bank, and the agent never fabricates evidence — it selects
-among documents the merchant already holds.
+### 9.1 Triage — [`agent/triage.py`](ringfence/agent/triage.py)
 
----
+**No LLM, and no fabricated win model.** There is no public dataset of dispute
+*outcomes*, so training a win-probability model would mean inventing labels —
+exactly what the rest of this project exists to avoid.
+
+Instead the detector's own score is inverted. Conditioned on a chargeback
+having been filed, it answers a different question:
+
+| Fraud score | Reading | Action |
+|---|---|---|
+| **High** | The card really was stolen; the cardholder is a victim telling the truth | **Accept.** Unwinnable, and fighting a real victim's claim is wrong |
+| **Low** | The transaction looked legitimate on every signal, yet is being disputed — the friendly-fraud signature | **Contest** |
+
+So a model validated on real labels does the work, and the ethical constraint
+falls out of the same signal: `test_genuine_fraud_is_never_contested` asserts
+the system will not fight a genuine victim.
+
+Win probability is a **saturating** curve, not a sum:
+
+```
+p = base + (ceiling - base) · lift / (lift + K)
+```
+
+An earlier additive version returned `p_win = 0.85` for friendly fraud and
+`0.28` against a genuinely stolen card — both far outside anything observed in
+card-not-present representment. Bounds are now 0.10–0.62 (friendly) and
+0.02–0.15 (genuine), matching the 20–40% band commonly reported.
+`test_win_probability_stays_inside_plausible_bounds` guards the regression.
+
+The contest/accept decision is then plain expected value against stated
+constants (₹400 staff effort, ₹250 lost-representment fee), all in
+[`triage.py`](ringfence/agent/triage.py) and overridable.
+
+### 9.2 Model selection — [`agent/llm.py`](ringfence/agent/llm.py)
+
+Both agents call **OpenRouter**, so the model behind either is an environment
+variable rather than a code change.
+
+Selected by surveying the catalogue (417 models, 332 supporting JSON-schema
+structured output) against three requirements: structured output, reasoning
+support, and price at the volume each job actually runs.
+
+**`google/gemini-3.7-flash`** ($0.38 / $1.88 per Mtok) for both. It is the
+newest Gemini generation on the platform *and* priced below the older
+3.6-flash ($0.75 / $3.75) and 3.5-flash ($1.50 / $9.00) — newer and cheaper, so
+there is no tradeoff to weigh.
+
+Considered and rejected for the drafter: the pro tier
+(`gemini-3.1-pro-preview`, $2.00 / $12.00). It is an older generation *and* a
+preview, and stability matters more than tier for the component whose output
+reaches a bank.
+
+**Measured cost:** one case file is 818 input / 635 output tokens =
+**₹0.13**. A thousand case files cost ₹132. These are reasoning models, so
+output tokens run well above what the prompt length suggests — budget on
+measured usage, not the nominal rate.
+
+`RINGFENCE_DRAFTER_MODEL` and `RINGFENCE_CASEFILE_MODEL` override either.
+`google/gemini-2.5-flash-lite` ($0.10 / $0.40) is a reasonable downgrade for
+case files if ring volume grows.
+
+### 9.3 Drafting — [`agent/drafter.py`](ringfence/agent/drafter.py)
+
+The model does what arithmetic cannot: read the merchant's document inventory,
+judge which document answers *this* reason code, and write the ≤1000-character
+issuer summary.
+
+**Safety property.** Every document id in the payload must exist in the
+inventory. A hallucinated id is not a formatting bug — it is a fabricated
+evidence claim sent to a bank. The prompt asks for this; `_validate_provenance`
+then *enforces* it, because a prompt is not a guarantee. Unrecognised ids are
+dropped and surfaced loudly in the operator narrative.
+`test_hallucinated_document_ids_are_rejected` is the security test for this
+component.
+
+`action` is a `Literal["draft"]` — submitting is not reachable from this code
+path, and constructing a payload with `action="submit"` fails validation.
+
+### 9.4 Analyst case files — [`agent/casefile.py`](ringfence/agent/casefile.py)
+
+A ranked list of transaction ids is not a product; the reviewer still has to
+reconstruct what happened. The case file states what links the ring, what the
+model reacted to, a graded action (allow / step_up / hold / block), and —
+mandatory — the **most plausible innocent explanation**. Shared addresses have
+legitimate causes: families, shared housing, offices, package forwarding. An
+analyst who only ever reads the prosecution case stops thinking.
+
+Run against the real held-out set, the top-ranked ring is:
+
+> **Ring 76963** — 4 cards, 5 transactions, ₹220,000, over 9 hours.
+> Amount CV **0.000** (near-identical amounts). Linked by `DeviceInfo`
+> `Z965 Build/NMF26V`, shared by all 4 cards; `P_emaildomain` shared by 3.
+> Peak model score 0.998.
+
+One Android device, four cards, identical amounts, one evening. Nothing in that
+example is invented — `scripts/demo_agent.py` reproduces it.
+
+The generated case file graded this **hold**, not block — correct, because the
+ring has no confirmed prior fraud — at medium confidence, and offered as the
+innocent reading: *"an individual or authorized buyer making split payments or
+settling multiple identical fixed invoices on behalf of family members or
+colleagues from a single shared mobile device."* That is a real possibility, and
+an analyst who never sees it stops thinking.
 
 ## 10. Scope and safety
 
