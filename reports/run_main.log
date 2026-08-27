@@ -1,0 +1,66 @@
+──────────────────────────────── load prepared ─────────────────────────────────
+[18:53:01] V-block reduction: 202 columns dropped, 244      run_experiment.py:71
+           features remain                                                      
+           train (453779, 246)  test (118108, 246)          run_experiment.py:83
+──────────────────────────────────── train ─────────────────────────────────────
+[18:53:01] valid split @ 8,996,705: train=363,023 valid=90,756      train.py:129
+           (fraud 3.377% / 4.114%)                                              
+[18:53:02] training on 363,023 x 244 (31 categorical)               train.py:157
+[200]	valid's average_precision: 0.678832
+[18:53:31] valid PR-AUC 0.6805 @ iter 233                           train.py:172
+           fitted sigmoid calibrator (ranking preserved); mean p    train.py:182
+           0.0411 vs actual 0.0411                                              
+─────────────────────────────────── evaluate ───────────────────────────────────
+
+Held-out test: 118,108 transactions, 3.441% fraud
+  PR-AUC   0.5986   (17.4x baseline)
+  ROC-AUC  0.9307   <- the flattering one
+
+precision@k
+   k  precision@k  recall@k  frauds_caught
+ 100       0.9800  0.024114             98
+ 500       0.9340  0.114911            467
+1000       0.9050  0.222687            905
+5000       0.4938  0.607530           2469
+
+recall at fixed false-positive budget
+ fp_budget  threshold   recall  precision  false_positives
+     0.001   0.869256 0.261319   0.903061              114
+     0.005   0.524692 0.455955   0.764754              570
+     0.010   0.347728 0.523622   0.651163             1140
+     0.050   0.090226 0.710630   0.336205             5702
+
+cost-optimal operating point
+  threshold 0.4000  flag rate 2.513%
+  precision 0.693  recall 0.506
+  net saving  Rs 18,476,797
+  vs baseline loss Rs 59,770,222 (30.9% recovered)
+
+ring/entity features = 7.9% of top-50 gain
+              feature  gain_pct  is_ring_feature
+                 V200  6.071232            False
+                  C14  4.329587            False
+                   C8  4.107212            False
+                  C13  4.059397            False
+           DeviceInfo  3.764242            False
+ring_known_fraud_rate  3.755717             True
+                   C1  3.724987            False
+                   C4  3.396678            False
+                card2  2.344853            False
+                   D2  2.302263            False
+                addr1  2.288583            False
+        R_emaildomain  2.092891            False
+                 V189  1.941658            False
+       TransactionAmt  1.902322            False
+        P_emaildomain  1.766475            False
+                 V283  1.705818            False
+                card1  1.666885            False
+                 V244  1.491658            False
+                   D3  1.485548            False
+                  D15  1.402703            False
+
+wrote /Users/main/Documents/razorpay-buildathon/reports/results_main.json  
+(31.9s total)
+[18:53:32] saved booster ->                                         train.py:115
+           /Users/main/Documents/razorpay-buildathon/models/lgbm_ma             
+           in.txt                                                               

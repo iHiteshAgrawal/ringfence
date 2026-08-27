@@ -8,10 +8,20 @@ Two choices worth defending:
    must actually mean "90% likely fraud". We keep the natural prior and move
    the DECISION THRESHOLD instead, which is the statistically correct knob.
 
-2. Isotonic calibration on a held-out time slice. Gradient boosting is
-   systematically over-confident. Uncalibrated scores make the cost curve pick
-   the wrong threshold, so calibration is not cosmetic here -- it changes the
-   money.
+2. Sigmoid (Platt) calibration on a held-out time slice, NOT isotonic.
+   Gradient boosting is systematically over-confident, and the cost curve
+   spends these numbers as probabilities, so calibration is not cosmetic.
+
+   Isotonic was the first choice and it was wrong. Fitted on a validation slice
+   holding only a few thousand positives, isotonic collapses a continuous score
+   into a coarse step function: measured here, 7,769 distinct scores became 48,
+   with hundreds tied at exactly 1.0. Ties are fatal for this project's headline
+   metrics -- precision@k orders arbitrarily inside a tie -- and PR-AUC fell
+   from 0.250 to 0.143, a 43% loss, purely from calibration.
+
+   A sigmoid fit is strictly monotonic, so it preserves ranking EXACTLY: every
+   ranking metric is identical before and after, while probabilities still get
+   corrected for the cost model. Tested in tests/test_calibration.py.
 """
 from __future__ import annotations
 
@@ -22,7 +32,7 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 from rich.console import Console
-from sklearn.calibration import IsotonicRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
 
 from ringfence import config
@@ -41,16 +51,53 @@ DEFAULT_PARAMS: dict = {
     "lambda_l2": 5.0,
     "max_cat_threshold": 64,
     "cat_smooth": 20.0,
+    # max_bin trades a little resolution for a lot of memory: LightGBM's
+    # histogram buffers scale with bins x features x leaves x threads. At the
+    # default 255 this model was killed by the OS on an 8GB machine; 63 bins
+    # costs nothing measurable in PR-AUC on a dataset this size.
+    "max_bin": 63,
     "verbosity": -1,
     "seed": config.RANDOM_SEED,
     "num_threads": 0,
 }
 
 
+class PlattCalibrator:
+    """Strictly monotonic probability calibration: preserves ranking exactly.
+
+    Fits a logistic regression on the logit of the raw score. Because the map
+    is strictly increasing, argsort(raw) == argsort(calibrated), so PR-AUC,
+    precision@k and every other ranking metric are provably unchanged.
+    """
+
+    def __init__(self) -> None:
+        self.lr = LogisticRegression(C=1e6, solver="lbfgs")
+
+    @staticmethod
+    def _logit(p: np.ndarray) -> np.ndarray:
+        p = np.clip(np.asarray(p, dtype=float), 1e-7, 1 - 1e-7)
+        return np.log(p / (1 - p))
+
+    def fit(self, raw: np.ndarray, y: np.ndarray) -> PlattCalibrator:
+        self.lr.fit(self._logit(raw).reshape(-1, 1), np.asarray(y))
+        # A negative slope would invert the ranking. It should never happen on a
+        # model that beats chance, but silently shipping an inverted score would
+        # be catastrophic, so refuse rather than guess.
+        if self.lr.coef_[0, 0] <= 0:
+            raise ValueError(
+                f"calibration slope {self.lr.coef_[0, 0]:.4f} <= 0: "
+                "the model ranks worse than chance on the validation slice"
+            )
+        return self
+
+    def predict(self, raw: np.ndarray) -> np.ndarray:
+        return self.lr.predict_proba(self._logit(raw).reshape(-1, 1))[:, 1]
+
+
 @dataclass
 class TrainedModel:
     booster: lgb.Booster
-    calibrator: IsotonicRegression | None
+    calibrator: PlattCalibrator | None
     feature_names: list[str]
     best_iteration: int
     valid_pr_auc: float
@@ -98,7 +145,12 @@ def train(
     params = {**DEFAULT_PARAMS, **(params or {})}
     X_tr, y_tr, X_va, y_va = time_aware_valid_split(X, y, t)
 
-    cat_cols = [c for c in X.columns if isinstance(X[c].dtype, pd.CategoricalDtype)]
+    if X.columns.has_duplicates:
+        dupes = X.columns[X.columns.duplicated()].unique().tolist()
+        raise ValueError(f"duplicate feature columns: {dupes}")
+    # Read dtypes off the frame rather than indexing column by column, which
+    # silently returns a DataFrame (not a Series) for any duplicated name.
+    cat_cols = [c for c, dt in X.dtypes.items() if isinstance(dt, pd.CategoricalDtype)]
     dtrain = lgb.Dataset(X_tr, y_tr, categorical_feature=cat_cols, free_raw_data=False)
     dvalid = lgb.Dataset(X_va, y_va, reference=dtrain, free_raw_data=False)
 
@@ -121,9 +173,16 @@ def train(
 
     calibrator = None
     if calibrate:
-        calibrator = IsotonicRegression(out_of_bounds="clip", y_min=0.0, y_max=1.0)
-        calibrator.fit(raw_va, y_va)
-        console.log("fitted isotonic calibrator on the validation slice")
+        calibrator = PlattCalibrator().fit(raw_va, y_va)
+        cal_va = calibrator.predict(raw_va)
+        # Assert the property we rely on, every time, on real data.
+        assert np.array_equal(np.argsort(raw_va), np.argsort(cal_va)), (
+            "calibration reordered the scores"
+        )
+        console.log(
+            f"fitted sigmoid calibrator (ranking preserved); "
+            f"mean p {cal_va.mean():.4f} vs actual {y_va.mean():.4f}"
+        )
 
     return TrainedModel(
         booster=booster,
