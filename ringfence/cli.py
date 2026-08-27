@@ -81,9 +81,21 @@ def train(
 
 
 @app.command()
-def ablate(tag: str = typer.Option("main", help="Prepared dataset to use.")) -> None:
-    """Measure what the honesty constraints cost, by deliberately breaking them."""
-    _run("leakage_ablation.py", "--tag", tag)
+def ablate(
+    tag: str = typer.Option("main", help="Prepared dataset to use."),
+    force: bool = typer.Option(
+        False, help="Recompute every variant instead of reusing cached results."
+    ),
+) -> None:
+    """Measure what the honesty constraints cost, by deliberately breaking them.
+
+    Reuses any variant whose results json already exists, so a repeat run is
+    instant. Pass --force to prepare and train all three from scratch (~6 min).
+    """
+    args = ["--tag", tag]
+    if force:
+        args.append("--force")
+    _run("leakage_ablation.py", *args)
 
 
 @app.command()
