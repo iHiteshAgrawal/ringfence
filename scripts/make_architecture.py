@@ -22,6 +22,7 @@ from __future__ import annotations
 from pathlib import Path
 
 W, H = 1120, 790
+REPO = "https://github.com/iHiteshAgrawal/ringfence/blob/main"
 OUT = Path(__file__).resolve().parent.parent / "docs" / "architecture.svg"
 
 INK = "var(--text-primary)"
@@ -48,7 +49,19 @@ def lane(x, y, w, h, label, tone=MUT):
              f'style="fill:{tone}">{esc(label)}</text>')
 
 
-def box(x, y, w, h, title, sub=None, note=None, accent=None):
+def srclabel(x, y, src):
+    """A clickable path to the file that implements a node.
+
+    Rendered below the box rather than inside it, so adding source links needed
+    no change to the node geometry. SVG <a> works because the diagram is inlined
+    into the page rather than loaded through <img>.
+    """
+    p.append(f'<a href="{REPO}/{src}" target="_blank" rel="noopener">'
+             f'<text x="{x}" y="{y}" font-size="9" style="fill:{MUT}" '
+             f'text-decoration="underline">{esc(src)} \u2197</text></a>')
+
+
+def box(x, y, w, h, title, sub=None, note=None, accent=None, src=None):
     stroke = accent or RULE
     p.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" '
              f'style="fill:{FILL};stroke:{stroke}"/>')
@@ -57,9 +70,11 @@ def box(x, y, w, h, title, sub=None, note=None, accent=None):
         p.append(f'<text x="{x + 12}" y="{y + 37}" font-size="9.5" style="fill:{SUB}">{esc(sub)}</text>')
     if note:
         p.append(f'<text x="{x + 12}" y="{y + 52}" font-size="9.5" style="fill:{S1}">{esc(note)}</text>')
+    if src:
+        srclabel(x + 2, y + h + 12, src)
 
 
-def store(x, y, w, h, title, sub=None, accent=S1):
+def store(x, y, w, h, title, sub=None, accent=S1, src=None):
     """A datastore, drawn as a cylinder so it reads as state, not a step."""
     ry = 9
     p.append(f'<path d="M{x} {y + ry} a {w / 2} {ry} 0 0 1 {w} 0 v {h - 2 * ry} '
@@ -71,6 +86,8 @@ def store(x, y, w, h, title, sub=None, accent=S1):
     if sub:
         p.append(f'<text x="{x + w / 2}" y="{y + 49}" font-size="9" text-anchor="middle" '
                  f'style="fill:{SUB}">{esc(sub)}</text>')
+    if src:
+        srclabel(x + 2, y + h + 12, src)
 
 
 def diamond(cx, cy, rw, rh, title, sub=None):
@@ -102,12 +119,18 @@ lane(8, 522, W - 16, 244, "HUMAN  &  EXTERNAL PARTIES", MUT)
 
 # ---------------------------------------------------------------- offline
 OY = 62
-box(24, OY, 148, 68, "historical txns", "IEEE-CIS, labelled", "590,540")
-box(196, OY, 156, 68, "entity resolution", "fingerprint + D1 anchor", "222,477 clients")
-box(376, OY, 164, 68, "feature build", "causal, 30-day label lag", "shared module")
-box(564, OY, 148, 68, "temporal split", "+7-day embargo", "453,779 / 118,108")
-box(736, OY, 156, 68, "LightGBM + Platt", "time-aware validation", "PR-AUC 0.5986")
-box(916, OY, 164, 68, "cost curve", "both errors priced", "threshold 0.400")
+box(24, OY, 148, 68, "historical txns", "IEEE-CIS, labelled", "590,540",
+    src="scripts/download_data.py")
+box(196, OY, 156, 68, "entity resolution", "fingerprint + D1 anchor", "222,477 clients",
+    src="ringfence/entity/resolve.py")
+box(376, OY, 164, 68, "feature build", "causal, 30-day label lag", "shared module",
+    src="ringfence/features/causal.py")
+box(564, OY, 148, 68, "temporal split", "+7-day embargo", "453,779 / 118,108",
+    src="ringfence/data/load.py")
+box(736, OY, 156, 68, "LightGBM + Platt", "time-aware validation", "PR-AUC 0.5986",
+    src="ringfence/model/train.py")
+box(916, OY, 164, 68, "cost curve", "both errors priced", "threshold 0.400",
+    src="ringfence/eval/metrics.py")
 for a, b in ((172, 196), (352, 376), (540, 564), (712, 736), (892, 916)):
     arrow([(a, OY + 34), (b, OY + 34)])
 
@@ -120,8 +143,10 @@ store(880, SY, 200, 72, "evidence store", "merchant's own documents", RULE)
 # ---------------------------------------------------------------- online
 NY = 374
 box(24, NY, 148, 68, "new transaction", "arrives at the gateway")
-box(196, NY, 156, 68, "resolve + link", "union-find, at arrival", "same module")
-box(376, NY, 164, 68, "feature build", "prior transactions only", "same module")
+box(196, NY, 156, 68, "resolve + link", "union-find, at arrival", "same module",
+    src="ringfence/entity/streaming.py")
+box(376, NY, 164, 68, "feature build", "prior transactions only", "same module",
+    src="ringfence/features/causal.py")
 box(564, NY, 148, 68, "score", "calibrated probability")
 diamond(800, NY + 34, 76, 42, "threshold", "cost-optimal")
 box(916, NY - 26, 164, 52, "allow", "97.5% of traffic")
@@ -144,15 +169,18 @@ arrow([(400, SY), (400, 196), (458, 196), (458, OY + 68)], "reads", color=S1, lx
 # ---------------------------------------------------------------- human / external
 HY = 656
 box(24, HY, 180, 68, "issuer files chargeback", "external event", "weeks later")
-box(228, HY, 168, 68, "dispute triage", "invert the fraud score", "contest / accept")
-box(420, HY, 168, 68, "draft payload", "evidence assembled", "action = draft")
+box(228, HY, 168, 68, "dispute triage", "invert the fraud score", "contest / accept",
+    src="ringfence/agent/triage.py")
+box(420, HY, 168, 68, "draft payload", "evidence assembled", "action = draft",
+    src="ringfence/agent/drafter.py")
 box(612, HY, 156, 68, "human approves", "always required", accent=BAD)
 box(792, HY, 180, 68, "Razorpay contest API", "representment filed")
 box(996, HY, 110, 68, "analyst", "works the queue")
 for a, b in ((204, 228), (396, 420), (588, 612), (768, 792)):
     arrow([(a, HY + 34), (b, HY + 34)])
 
-box(908, 560, 180, 60, "case file agent", "graded, reversible action", accent=S1)
+box(908, 560, 180, 60, "case file agent", "graded, reversible action", accent=S1,
+    src="ringfence/agent/casefile.py")
 arrow([(998, NY + 94), (998, 560)], "flagged ring", color=S1, lx=1004, ly=530, anchor="start")
 arrow([(1040, 620), (1040, HY)])
 

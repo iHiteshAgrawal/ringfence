@@ -113,6 +113,12 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   outline: 2px solid var(--series-1); outline-offset: 2px;
 }
 code { font-family: var(--mono); font-size: .87em; background: var(--surface-2); padding: .1em .35em; border-radius: 2px; }
+a.srclink { text-decoration: none; }
+a.srclink code { color: var(--series-1); text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--series-1) 45%, transparent);
+  text-underline-offset: 2px; }
+a.srclink:hover code { text-decoration-color: var(--series-1); }
+a.srclink code::after { content: " \2197"; font-size: .85em; opacity: .7; }
 .lede { font-size: 1.05rem; color: var(--text-secondary); }
 
 /* Intro prose beside a vertical figure panel. Single column below 900px, where
@@ -500,14 +506,14 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
     code — <code>features/causal.py</code> is the identical module in both, which is why performance
     measured offline means anything online.</p>
     <p>
-      <button class="disclose" id="pipe-toggle" aria-expanded="false" aria-controls="pipe-body">
-        Show the architecture
+      <button class="disclose" id="pipe-toggle" aria-expanded="true" aria-controls="pipe-body">
+        Hide the architecture
       </button>
-      <span class="pipe-note">two planes, shared state, and the chargeback feedback loop</span>
+      <span class="pipe-note">every node links to the file that implements it</span>
     </p>
   </div>
 
-  <div id="pipe-body" hidden>
+  <div id="pipe-body">
   <figure class="bleed" style="width:min(94vw,1240px);margin-left:calc(50% - min(47vw,620px))">
     <div class="scroll" id="arch-host">
       <p class="tick" style="padding:1rem 0">loading diagram…</p>
@@ -691,12 +697,55 @@ python scripts/build_site.py --with-casefiles</pre>
     <span class="who">Hitesh Kumar Gupta</span>
     <a href="https://hiteshkrgupta.github.io/">hiteshkrgupta.github.io</a>
     <a href="mailto:hiteshagarwal172@gmail.com">hiteshagarwal172@gmail.com</a>
+    <a href="https://github.com/iHiteshAgrawal/ringfence">github.com/iHiteshAgrawal/ringfence</a>
   </p>
   <p id="foot"></p>
 </footer>
 </div>
 
 <script>
+const REPO = "https://github.com/iHiteshAgrawal/ringfence";
+/* Paths named in the prose, mapped to their location in the repo. Kept explicit
+   rather than guessed from the string, so a renamed file produces a visibly
+   missing link here instead of a silent 404 for the reader. */
+const SOURCES = {
+  "config.py": "ringfence/config.py",
+  "features/pipeline.py": "ringfence/features/pipeline.py",
+  "features/causal.py": "ringfence/features/causal.py",
+  "features/select.py": "ringfence/features/select.py",
+  "entity/resolve.py": "ringfence/entity/resolve.py",
+  "entity/streaming.py": "ringfence/entity/streaming.py",
+  "data/load.py": "ringfence/data/load.py",
+  "model/train.py": "ringfence/model/train.py",
+  "eval/metrics.py": "ringfence/eval/metrics.py",
+  "agent/triage.py": "ringfence/agent/triage.py",
+  "agent/drafter.py": "ringfence/agent/drafter.py",
+  "agent/casefile.py": "ringfence/agent/casefile.py",
+  "agent/llm.py": "ringfence/agent/llm.py",
+  "build_site.py": "scripts/build_site.py",
+  "scripts/build_site.py": "scripts/build_site.py",
+  "scripts/leakage_ablation.py": "scripts/leakage_ablation.py",
+  "scripts/make_architecture.py": "scripts/make_architecture.py",
+  "reports/": {path: "reports", dir: true}
+};
+
+function linkSources(root) {
+  root.querySelectorAll("code").forEach(c => {
+    if (c.closest("a") || c.closest("pre")) return;
+    const entry = SOURCES[c.textContent.trim()];
+    if (!entry) return;
+    const path = typeof entry === "string" ? entry : entry.path;
+    const kind = (typeof entry === "object" && entry.dir) ? "tree" : "blob";
+    const a = document.createElement("a");
+    a.href = `${REPO}/${kind}/main/${path}`;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.className = "srclink";
+    c.replaceWith(a);
+    a.append(c);
+  });
+}
+
 const F = {
   inr: n => (n < 0 ? "−" : "") + "₹" + Math.abs(Math.round(n)).toLocaleString("en-IN"),
   inrShort: n => {
@@ -1037,6 +1086,7 @@ function render() {
         '<p class="err">Could not load architecture.svg.</p>';
     });
   };
+  loadArch();   // the panel starts expanded, so fetch the diagram right away
   pt.addEventListener("click", () => {
     const open = pb.hidden;
     pb.hidden = !open;
@@ -1130,6 +1180,8 @@ function render() {
   ];
   const ul = document.getElementById("limits-list");
   lim.forEach(t => { const li = el("li"); li.innerHTML = t; ul.append(li); });
+
+  linkSources(document);
 
   document.getElementById("foot").innerHTML =
     `Generated ${d.generated_at} from commit <code>${d.commit}</code>. ` +

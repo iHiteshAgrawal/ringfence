@@ -18,26 +18,32 @@
     <text x="36" y="83" font-size="12" style="fill:var(--text-primary)">historical txns</text>
     <text x="36" y="99" font-size="9.5" style="fill:var(--text-secondary)">IEEE-CIS, labelled</text>
     <text x="36" y="114" font-size="9.5" style="fill:var(--series-1)">590,540</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/scripts/download_data.py" target="_blank" rel="noopener"><text x="26" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">scripts/download_data.py ↗</text></a>
     <rect x="196" y="62" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="208" y="83" font-size="12" style="fill:var(--text-primary)">entity resolution</text>
     <text x="208" y="99" font-size="9.5" style="fill:var(--text-secondary)">fingerprint + D1 anchor</text>
     <text x="208" y="114" font-size="9.5" style="fill:var(--series-1)">222,477 clients</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/entity/resolve.py" target="_blank" rel="noopener"><text x="198" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/entity/resolve.py ↗</text></a>
     <rect x="376" y="62" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="388" y="83" font-size="12" style="fill:var(--text-primary)">feature build</text>
     <text x="388" y="99" font-size="9.5" style="fill:var(--text-secondary)">causal, 30-day label lag</text>
     <text x="388" y="114" font-size="9.5" style="fill:var(--series-1)">shared module</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/features/causal.py" target="_blank" rel="noopener"><text x="378" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/features/causal.py ↗</text></a>
     <rect x="564" y="62" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="576" y="83" font-size="12" style="fill:var(--text-primary)">temporal split</text>
     <text x="576" y="99" font-size="9.5" style="fill:var(--text-secondary)">+7-day embargo</text>
     <text x="576" y="114" font-size="9.5" style="fill:var(--series-1)">453,779 / 118,108</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/data/load.py" target="_blank" rel="noopener"><text x="566" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/data/load.py ↗</text></a>
     <rect x="736" y="62" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="748" y="83" font-size="12" style="fill:var(--text-primary)">LightGBM + Platt</text>
     <text x="748" y="99" font-size="9.5" style="fill:var(--text-secondary)">time-aware validation</text>
     <text x="748" y="114" font-size="9.5" style="fill:var(--series-1)">PR-AUC 0.5986</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/model/train.py" target="_blank" rel="noopener"><text x="738" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/model/train.py ↗</text></a>
     <rect x="916" y="62" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="928" y="83" font-size="12" style="fill:var(--text-primary)">cost curve</text>
     <text x="928" y="99" font-size="9.5" style="fill:var(--text-secondary)">both errors priced</text>
     <text x="928" y="114" font-size="9.5" style="fill:var(--series-1)">threshold 0.400</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/eval/metrics.py" target="_blank" rel="noopener"><text x="918" y="142" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/eval/metrics.py ↗</text></a>
     <polyline points="172,96 196,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
     <polyline points="352,96 376,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
     <polyline points="540,96 564,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
@@ -62,10 +68,12 @@
     <text x="208" y="395" font-size="12" style="fill:var(--text-primary)">resolve + link</text>
     <text x="208" y="411" font-size="9.5" style="fill:var(--text-secondary)">union-find, at arrival</text>
     <text x="208" y="426" font-size="9.5" style="fill:var(--series-1)">same module</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/entity/streaming.py" target="_blank" rel="noopener"><text x="198" y="454" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/entity/streaming.py ↗</text></a>
     <rect x="376" y="374" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="388" y="395" font-size="12" style="fill:var(--text-primary)">feature build</text>
     <text x="388" y="411" font-size="9.5" style="fill:var(--text-secondary)">prior transactions only</text>
     <text x="388" y="426" font-size="9.5" style="fill:var(--series-1)">same module</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/features/causal.py" target="_blank" rel="noopener"><text x="378" y="454" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/features/causal.py ↗</text></a>
     <rect x="564" y="374" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="576" y="395" font-size="12" style="fill:var(--text-primary)">score</text>
     <text x="576" y="411" font-size="9.5" style="fill:var(--text-secondary)">calibrated probability</text>
@@ -100,10 +108,12 @@
     <text x="240" y="677" font-size="12" style="fill:var(--text-primary)">dispute triage</text>
     <text x="240" y="693" font-size="9.5" style="fill:var(--text-secondary)">invert the fraud score</text>
     <text x="240" y="708" font-size="9.5" style="fill:var(--series-1)">contest / accept</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/agent/triage.py" target="_blank" rel="noopener"><text x="230" y="736" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/agent/triage.py ↗</text></a>
     <rect x="420" y="656" width="168" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
     <text x="432" y="677" font-size="12" style="fill:var(--text-primary)">draft payload</text>
     <text x="432" y="693" font-size="9.5" style="fill:var(--text-secondary)">evidence assembled</text>
     <text x="432" y="708" font-size="9.5" style="fill:var(--series-1)">action = draft</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/agent/drafter.py" target="_blank" rel="noopener"><text x="422" y="736" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/agent/drafter.py ↗</text></a>
     <rect x="612" y="656" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--invalid)"/>
     <text x="624" y="677" font-size="12" style="fill:var(--text-primary)">human approves</text>
     <text x="624" y="693" font-size="9.5" style="fill:var(--text-secondary)">always required</text>
@@ -120,6 +130,7 @@
     <rect x="908" y="560" width="180" height="60" rx="4" style="fill:var(--surface-2);stroke:var(--series-1)"/>
     <text x="920" y="581" font-size="12" style="fill:var(--text-primary)">case file agent</text>
     <text x="920" y="597" font-size="9.5" style="fill:var(--text-secondary)">graded, reversible action</text>
+    <a href="https://github.com/iHiteshAgrawal/ringfence/blob/main/ringfence/agent/casefile.py" target="_blank" rel="noopener"><text x="910" y="632" font-size="9" style="fill:var(--text-muted)" text-decoration="underline">ringfence/agent/casefile.py ↗</text></a>
     <polyline points="998,468 998,560" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
     <text x="1004" y="530" font-size="9" text-anchor="start" style="fill:var(--series-1)">flagged ring</text>
     <polyline points="1040,620 1040,656" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>

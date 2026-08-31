@@ -4,6 +4,11 @@
 
 Built for the Razorpay AI Buildathon, Track 02 — AI Risk Manager.
 
+**📊 [Live results report →](https://hiteshkrgupta.github.io/projects/ringfence/)**
+Held-out metrics, an interactive cost-optimal threshold, the leakage ablation, and
+the ring review queue with generated case files. Every number on it is regenerated
+from `reports/` by `scripts/build_site.py`.
+
 > **Defense-only.** This repository detects and responds to fraud. It contains no
 > offense-capable code: no synthetic-identity generation, no evasion testing, no
 > carding utilities. See [Scope and safety](#scope-and-safety).
@@ -123,18 +128,20 @@ that is how the numbers above were produced.
 
 ## Results page
 
-An interactive report lives in [`docs/`](docs/) and is served by GitHub Pages:
-held-out metrics, a draggable cost-optimal threshold, the leakage ablation, and
-the ring review queue with generated case files.
+The report lives in [`docs/`](docs/) and is published at
+**<https://hiteshkrgupta.github.io/projects/ringfence/>**.
 
 ```bash
-ringfence site                  # rebuild docs/data.json from reports/
-python -m http.server --directory docs   # preview at localhost:8000
+ringfence site                            # rebuild docs/ from reports/
+ringfence site --mirror ../some/other/repo   # and publish it elsewhere
+python -m http.server --directory docs    # preview at localhost:8000
 ```
 
-Nothing on that page is hand-written or simulated: `scripts/build_site.py`
-regenerates `docs/data.json` from `reports/`, so the page cannot drift from the
-experiment that produced it.
+Nothing on that page is hand-written or simulated. `scripts/build_site.py`
+regenerates `docs/data.json` from `reports/` and `scripts/make_architecture.py`
+regenerates the architecture diagram, so the page cannot drift from the
+experiment that produced it. Every node in the architecture diagram links to the
+file that implements it.
 
 ## Scope and safety
 
