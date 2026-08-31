@@ -332,7 +332,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
         <b>$33.4 bn</b>
         <span class="what">Card fraud losses worldwide in 2024, with $403.88 bn projected cumulatively
         over ten years.</span>
-        <span class="src"><a href="https://nilsonreport.com/articles/card-fraud-losses-worldwide-2024/">Nilson
+        <span class="src"><a href="https://nilsonreport.com/articles/card-fraud-losses-worldwide-2024/" target="_blank" rel="noopener">Nilson
         Report, 2026</a></span>
       </div>
 
@@ -695,9 +695,9 @@ python scripts/build_site.py --with-casefiles</pre>
 <footer class="col">
   <p class="byline">
     <span class="who">Hitesh Kumar Gupta</span>
-    <a href="https://hiteshkrgupta.github.io/">hiteshkrgupta.github.io</a>
+    <a href="https://hiteshkrgupta.github.io/" target="_blank" rel="noopener">hiteshkrgupta.github.io</a>
     <a href="mailto:hiteshagarwal172@gmail.com">hiteshagarwal172@gmail.com</a>
-    <a href="https://github.com/iHiteshAgrawal/ringfence">github.com/iHiteshAgrawal/ringfence</a>
+    <a href="https://github.com/iHiteshAgrawal/ringfence" target="_blank" rel="noopener">github.com/iHiteshAgrawal/ringfence</a>
   </p>
   <p id="foot"></p>
 </footer>
@@ -728,6 +728,21 @@ const SOURCES = {
   "scripts/make_architecture.py": "scripts/make_architecture.py",
   "reports/": {path: "reports", dir: true}
 };
+
+/* Every off-site link opens in a new tab, so a reader never loses their place
+   in the report -- especially mid-way through the threshold explorer, whose
+   state is not in the URL. Applied as a sweep rather than per-link because some
+   links are built at render time; mailto: and in-page anchors are left alone,
+   where a blank tab would be wrong. */
+function externalise(root) {
+  root.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute("href") || "";
+    if (!/^https?:\/\//i.test(href)) return;      // skips mailto:, #anchors, relative
+    if (a.host === location.host) return;          // same-origin stays in place
+    a.target = "_blank";
+    a.rel = a.rel ? a.rel : "noopener";
+  });
+}
 
 function linkSources(root) {
   root.querySelectorAll("code").forEach(c => {
@@ -981,7 +996,7 @@ function render() {
 
   const meta = document.getElementById("meta");
   const rows = [
-    ["Dataset", `<a href="${d.dataset.url}">IEEE-CIS</a>`],
+    ["Dataset", `<a href="${d.dataset.url}" target="_blank" rel="noopener">IEEE-CIS</a>`],
     ["Transactions", F.int(d.dataset.n_total)],
     ["Train / held-out", `${F.int(d.dataset.n_train)} / ${F.int(d.dataset.n_test)}`],
     ["Fraud rate", F.pct(d.dataset.prevalence, 2)],
@@ -1081,6 +1096,7 @@ function render() {
       host.innerHTML = t;
       const svg = host.querySelector("svg");
       if (svg) { svg.style.minWidth = "1120px"; svg.removeAttribute("width"); }
+      externalise(host);   // injected after the initial sweep
     }).catch(() => {
       document.getElementById("arch-host").innerHTML =
         '<p class="err">Could not load architecture.svg.</p>';
@@ -1182,6 +1198,7 @@ function render() {
   lim.forEach(t => { const li = el("li"); li.innerHTML = t; ul.append(li); });
 
   linkSources(document);
+  externalise(document);
 
   document.getElementById("foot").innerHTML =
     `Generated ${d.generated_at} from commit <code>${d.commit}</code>. ` +
