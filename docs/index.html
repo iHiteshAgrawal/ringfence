@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ringfence — Results</title>
+<meta name="description" content="Abuse-ring detection for card-not-present fraud: held-out results, cost-optimal thresholding, and a measured leakage ablation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --surface:        #fcfcfb;
+  --surface-2:      #f2f2ef;
+  --surface-3:      #e8e8e4;
+  --text-primary:   #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted:     #78776f;
+  --rule:           #dcdcd6;
+  --grid:           #e6e6e0;
+  --axis:           #b4b4ac;
+  --series-1:       #2a78d6;
+  --series-2:       #eb6834;
+  --invalid:        #d03b3b;
+  --series-1-soft:  #2a78d61f;
+
+  --serif: "IBM Plex Serif", Georgia, serif;
+  --sans:  "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --measure: 40rem;
+  --wide: 60rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface:        #1a1a19;
+    --surface-2:      #232322;
+    --surface-3:      #2d2d2b;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #94938a;
+    --rule:           #35352f;
+    --grid:           #2b2b28;
+    --axis:           #55554e;
+    --series-1:       #3987e5;
+    --series-2:       #d95926;
+    --invalid:        #d03b3b;
+    --series-1-soft:  #3987e526;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface:        #1a1a19;
+  --surface-2:      #232322;
+  --surface-3:      #2d2d2b;
+  --text-primary:   #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted:     #94938a;
+  --rule:           #35352f;
+  --grid:           #2b2b28;
+  --axis:           #55554e;
+  --series-1:       #3987e5;
+  --series-2:       #d95926;
+  --invalid:        #d03b3b;
+  --series-1-soft:  #3987e526;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--surface); color: var(--text-primary);
+  font-family: var(--sans); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1.5rem 6rem; }
+.col { max-width: var(--measure); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---- masthead ---- */
+header.top { padding: 4rem 0 1.75rem; border-bottom: 2px solid var(--text-primary); }
+h1 {
+  font-family: var(--serif); font-weight: 600; letter-spacing: -0.02em;
+  font-size: clamp(2.1rem, 5vw, 3rem); line-height: 1.05; margin: 0 0 .5rem;
+}
+.subtitle {
+  font-family: var(--serif); font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+  color: var(--text-secondary); margin: 0 0 1.75rem; max-width: 38rem;
+}
+.meta {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: .85rem 1.5rem; font-family: var(--mono); font-size: .74rem;
+  border-top: 1px solid var(--rule); padding-top: 1.1rem;
+}
+.meta dt { color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .15rem; }
+.meta dd { margin: 0; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.meta a { color: var(--series-1); }
+
+/* ---- sections ---- */
+section { margin: 3.5rem 0; scroll-margin-top: 1rem; }
+h2 {
+  font-family: var(--serif); font-weight: 600; font-size: 1.45rem;
+  letter-spacing: -.01em; margin: 0 0 1rem; display: flex; gap: .7rem; align-items: baseline;
+}
+h2 .sn { font-family: var(--mono); font-size: .8rem; color: var(--text-muted); font-weight: 400; }
+h3 { font-family: var(--sans); font-weight: 600; font-size: .98rem; margin: 2rem 0 .5rem; }
+p { margin: 0 0 1rem; }
+a { color: var(--series-1); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--series-1); outline-offset: 2px;
+}
+code { font-family: var(--mono); font-size: .87em; background: var(--surface-2); padding: .1em .35em; border-radius: 2px; }
+.lede { font-size: 1.05rem; color: var(--text-secondary); }
+
+/* ---- figures & tables ---- */
+figure { margin: 2rem 0; }
+figcaption {
+  font-size: .82rem; line-height: 1.5; color: var(--text-secondary);
+  margin-top: .85rem; max-width: 42rem;
+}
+figcaption b, .tcap b { font-family: var(--mono); font-size: .76rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text-muted); font-weight: 500; margin-right: .4rem; }
+.tcap { font-size: .82rem; line-height: 1.5; color: var(--text-secondary); margin: 0 0 .8rem; max-width: 42rem; }
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-family: var(--mono);
+  font-size: .8rem; font-variant-numeric: tabular-nums; min-width: 30rem; }
+th { text-align: right; font-weight: 500; font-size: .7rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--text-muted); padding: 0 0 .5rem;
+  border-bottom: 1px solid var(--text-primary); }
+td { text-align: right; padding: .5rem 0; border-bottom: 1px solid var(--rule); }
+th:first-child, td:first-child { text-align: left; font-family: var(--sans); }
+th + th, td + td { padding-left: 1.25rem; }
+tr.is-invalid td { color: var(--invalid); }
+tr.is-ref td { font-weight: 500; }
+
+/* ---- controls ---- */
+.controls { background: var(--surface-2); border: 1px solid var(--rule);
+  border-radius: 3px; padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; }
+.ctl-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.ctl-label { font-family: var(--mono); font-size: .72rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--text-muted); }
+input[type=range] { flex: 1 1 16rem; min-width: 12rem; accent-color: var(--series-1); }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.seg button {
+  font-family: var(--mono); font-size: .74rem; padding: .45rem .8rem; border: 0;
+  background: var(--surface); color: var(--text-secondary); cursor: pointer;
+  border-right: 1px solid var(--rule);
+}
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--text-primary); color: var(--surface); }
+.linkish { background: none; border: 0; padding: 0; font-family: var(--mono);
+  font-size: .72rem; color: var(--series-1); cursor: pointer; text-decoration: underline; }
+
+/* ---- readout tiles ---- */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 1.25rem 0; }
+.tile { background: var(--surface); padding: .9rem 1rem; }
+.tile .k { font-family: var(--mono); font-size: .66rem; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: .3rem; }
+.tile .v { font-family: var(--mono); font-size: 1.15rem; font-variant-numeric: tabular-nums;
+  display: block; letter-spacing: -.01em; }
+.tile .s { font-size: .72rem; color: var(--text-muted); display: block; margin-top: .15rem; }
+.pos { color: var(--series-1); } .neg { color: var(--invalid); }
+
+/* ---- legend ---- */
+.legend { display: flex; gap: 1.25rem; flex-wrap: wrap; font-family: var(--mono);
+  font-size: .74rem; color: var(--text-secondary); margin-bottom: .6rem; }
+.legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.swatch { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+svg { display: block; max-width: 100%; height: auto; }
+.tick { font-family: var(--mono); font-size: 10px; fill: var(--text-muted); }
+.axlabel { font-family: var(--mono); font-size: 10px; fill: var(--text-secondary);
+  letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---- ring queue ---- */
+.queue tbody tr { cursor: pointer; }
+.queue tbody tr:hover td { background: var(--surface-2); }
+.queue tbody tr[aria-selected="true"] td { background: var(--series-1-soft); }
+.case { border: 1px solid var(--rule); border-left: 3px solid var(--series-1);
+  background: var(--surface-2); padding: 1.25rem 1.4rem; margin-top: 1.25rem; border-radius: 2px; }
+.case dl { margin: 0; display: grid; gap: .9rem; }
+.case dt { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: .2rem; }
+.case dd { margin: 0; font-size: .93rem; }
+.badge { font-family: var(--mono); font-size: .7rem; padding: .2rem .5rem;
+  border-radius: 2px; border: 1px solid currentColor; letter-spacing: .05em; }
+.b-hold { color: #b8860b; } .b-block { color: var(--invalid); }
+.b-step_up { color: var(--series-2); } .b-allow { color: var(--text-secondary); }
+
+.note { background: var(--surface-2); border: 1px solid var(--rule);
+  padding: 1.1rem 1.25rem; border-radius: 3px; margin: 1.5rem 0; font-size: .93rem; }
+.note-h { font-family: var(--mono); font-size: .68rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: .5rem; }
+.note p:last-child { margin-bottom: 0; }
+
+footer { border-top: 1px solid var(--rule); margin-top: 4rem; padding-top: 1.5rem;
+  font-size: .82rem; color: var(--text-muted); }
+pre { background: var(--surface-2); border: 1px solid var(--rule); border-radius: 3px;
+  padding: .9rem 1rem; overflow-x: auto; font-family: var(--mono); font-size: .78rem; line-height: 1.7; }
+ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
+.err { border: 1px solid var(--invalid); color: var(--invalid); padding: 1rem 1.2rem;
+  border-radius: 3px; font-family: var(--mono); font-size: .82rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (max-width: 620px) { body { font-size: 15px; } header.top { padding-top: 2.5rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Ringfence</h1>
+  <p class="subtitle">Abuse-ring detection for card-not-present fraud, priced in rupees rather than ranked by AUC.</p>
+  <dl class="meta" id="meta"></dl>
+</header>
+
+<section id="abstract">
+  <div class="col">
+    <p class="lede">A merchant does not lose money to fraudsters one at a time. They lose it to
+    <em>rings</em> — one operator running many cards through a handful of shared addresses, devices and
+    email domains. Scored individually each transaction is unremarkable; scored as a group the operator
+    is obvious.</p>
+    <p>This page reports held-out performance for a ring-aware detector on the IEEE-CIS card-not-present
+    dataset, whose ground truth is reported chargebacks. Every figure is generated from the artefacts in
+    <code>reports/</code> by <code>scripts/build_site.py</code>, so this page cannot drift from the
+    experiment that produced it.</p>
+  </div>
+</section>
+
+<section id="results">
+  <h2><span class="sn">1</span> Held-out performance</h2>
+  <div class="col">
+    <p>Evaluated on transactions from a period strictly later than all training data, with a 7-day
+    embargo at the boundary. The ablation column retrains the identical pipeline with every ring and
+    entity feature removed.</p>
+  </div>
+  <p class="tcap"><b>Table 1</b> Detection performance with and without the ring layer.
+  precision@100 is the one measure where the ring model does slightly worse; both are saturated at the
+  top of the ranking.</p>
+  <div class="scroll"><table id="t-results"></table></div>
+  <div class="tiles" id="headline-tiles"></div>
+</section>
+
+<section id="threshold">
+  <h2><span class="sn">2</span> Choosing the operating point</h2>
+  <div class="col">
+    <p>Precision and recall trade against each other, so the threshold is not a modelling choice — it is
+    an economic one. Both mistakes are priced: a missed fraud costs the goods, the amount and a penalty
+    fee; a blocked legitimate customer costs that order's margin, scaled for the share who never return.</p>
+    <p>Drag the threshold. Flagging everything catches all the fraud and is catastrophic.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <label class="ctl-label" for="thr">Threshold</label>
+      <input type="range" id="thr" min="0" max="87" value="0" step="1"
+             aria-describedby="thr-readout">
+      <span class="ctl-label num" id="thr-readout"></span>
+    </div>
+  </div>
+
+  <div class="tiles" id="op-tiles"></div>
+
+  <figure>
+    <div class="legend"><span><i class="swatch" style="background:var(--series-1)"></i>Net saving</span></div>
+    <div id="fig1a"></div>
+    <figcaption><b>Figure 1a</b> Net saving against the share of traffic flagged for review, in rupees,
+    relative to a no-model baseline of approving everything. The vertical axis is clipped; the curve
+    continues to <span class="num" id="worst-loss"></span> when every transaction is flagged. Log
+    horizontal axis.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--series-1)"></i>Precision</span>
+      <span><i class="swatch" style="background:var(--series-2)"></i>Recall</span>
+    </div>
+    <div id="fig1b"></div>
+    <figcaption><b>Figure 1b</b> Precision and recall against the same horizontal axis. Both are unitless
+    proportions, so they share one scale.</figcaption>
+  </figure>
+
+  <p><button class="linkish" id="toggle-table" aria-expanded="false">Show Figure 1 as a table</button></p>
+  <div class="scroll" id="curve-table" hidden></div>
+</section>
+
+<section id="honesty">
+  <h2><span class="sn">3</span> What the honesty costs</h2>
+  <div class="col">
+    <p>Claiming a leakage boundary is worth nothing unless the gap is measured. Each guarantee was broken
+    in turn, changing nothing else. The variants below are <strong>not results</strong> — they are the
+    size of the overstatement avoided.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <span class="ctl-label">Variant</span>
+      <div class="seg" id="ab-seg" role="group" aria-label="Ablation variant"></div>
+    </div>
+  </div>
+
+  <div class="tiles" id="ab-tiles"></div>
+
+  <figure>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--series-1)"></i>Valid measurement</span>
+      <span><i class="swatch" style="background:var(--invalid)"></i>Invalid — assumption cannot hold</span>
+    </div>
+    <div id="fig2"></div>
+    <figcaption><b>Figure 2</b> PR-AUC and net saving under each variant, as separate panels because the
+    two quantities share no scale. Either shortcut lifts PR-AUC from 0.60 to roughly 0.96 and nearly
+    triples the reported saving.</figcaption>
+  </figure>
+
+  <div class="note col">
+    <p class="note-h">Getting this wrong, first time</p>
+    <p>The first version of this ablation replaced the causal features rather than leaking the same ones.
+    That also dropped the lag-gated fraud-history feature, so the &ldquo;leaky&rdquo; variant scored 10.5%
+    <em>worse</em> — proving nothing except that it had lost an important feature. A leakage test must vary
+    causality and nothing else.</p>
+  </div>
+</section>
+
+<section id="rings">
+  <h2><span class="sn">4</span> Ring review queue</h2>
+  <div class="col">
+    <p>A ranked list of transaction identifiers is not a product; the reviewer still has to reconstruct
+    what happened. Each ring below carries a generated case file stating what links the accounts, what the
+    model reacted to, a graded and reversible action, and — mandatory — the most plausible innocent
+    explanation.</p>
+  </div>
+  <p class="tcap"><b>Table 2</b> Highest-scoring multi-card rings in the held-out period. Select a row for
+  its case file.</p>
+  <div class="scroll"><table class="queue" id="t-rings"></table></div>
+  <div id="case-panel"></div>
+</section>
+
+<section id="limits">
+  <h2><span class="sn">5</span> Limitations</h2>
+  <div class="col">
+    <ul id="limits-list"></ul>
+  </div>
+</section>
+
+<section id="repro">
+  <h2><span class="sn">6</span> Reproduction</h2>
+  <div class="col">
+    <p>Every number on this page is regenerated by the commands below. The page reads
+    <code>docs/data.json</code>, which <code>build_site.py</code> writes from <code>reports/</code>.</p>
+<pre>uv venv --python 3.11 &amp;&amp; uv pip install -e .
+ringfence data download
+ringfence data prepare --tag main
+ringfence train --tag main
+ringfence train --tag noring --data-tag main --no-ring-features
+ringfence ablate --force
+python scripts/build_site.py --with-casefiles</pre>
+  </div>
+</section>
+
+<footer class="col">
+  <p id="foot"></p>
+</footer>
+</div>
+
+<script>
+const F = {
+  inr: n => (n < 0 ? "−" : "") + "₹" + Math.abs(Math.round(n)).toLocaleString("en-IN"),
+  inrShort: n => {
+    const a = Math.abs(n), s = n < 0 ? "−" : "";
+    if (a >= 1e7) return s + "₹" + (a / 1e7).toFixed(2) + " cr";
+    if (a >= 1e5) return s + "₹" + (a / 1e5).toFixed(1) + " L";
+    return s + "₹" + Math.round(a).toLocaleString("en-IN");
+  },
+  pct: (n, d = 1) => (100 * n).toFixed(d) + "%",
+  n: (v, d = 4) => Number(v).toFixed(d),
+  int: v => Math.round(v).toLocaleString("en-IN")
+};
+const el = (t, a = {}, kids = []) => {
+  const e = document.createElementNS(a.ns || "http://www.w3.org/1999/xhtml", t);
+  for (const [k, v] of Object.entries(a)) if (k !== "ns") e.setAttribute(k, v);
+  for (const c of [].concat(kids)) e.append(c);
+  return e;
+};
+const S = (t, a = {}) => { const e = document.createElementNS("http://www.w3.org/2000/svg", t);
+  for (const [k, v] of Object.entries(a)) e.setAttribute(k, v); return e; };
+
+let D = null;
+let CURVE = [];          // cost curve sorted by flag rate, ascending
+const MARKX = {};        // per-chart geometry for the threshold marker
+
+fetch("data.json").then(r => {
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}).then(d => {
+  D = d;
+  CURVE = [...d.cost_curve].sort((a, b) => a.flag_rate - b.flag_rate);
+  render();
+}).catch(e => {
+  document.querySelector(".wrap").prepend(el("div", { class: "err" },
+    "Could not load data.json (" + e.message + "). Serve this directory over HTTP — " +
+    "for example `python -m http.server` from docs/ — rather than opening the file directly."));
+});
+
+/* ---------- charts ---------- */
+const PAD = { l: 66, r: 18, t: 14, b: 40 };
+/* Left padding must fit the widest tick label. Rupee amounts like "−₹5.90 cr"
+   need far more room than "0.8", and too little clips the minus sign off the
+   viewBox — which silently turns a negative tick into a positive one. */
+const padFor = l => ({ ...PAD, l });
+function frame(w, h, title) {
+  const svg = S("svg", { viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": title });
+  return svg;
+}
+const logx = (v, lo, hi, w, P) => { P = P || PAD;
+  return P.l + (Math.log10(Math.max(v, lo)) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) * (w - P.l - P.r); };
+
+function axes(svg, w, h, xlo, xhi, ylo, yhi, yfmt, xlabel, ylabel, yticks, P) {
+  P = P || PAD;
+  const ys = yticks || 5;
+  for (let i = 0; i <= ys; i++) {
+    const val = ylo + (yhi - ylo) * i / ys;
+    const y = h - P.b - (val - ylo) / (yhi - ylo) * (h - P.t - P.b);
+    svg.append(S("line", { x1: P.l, x2: w - P.r, y1: y, y2: y,
+      stroke: "var(--grid)", "stroke-width": 1 }));
+    const t = S("text", { x: P.l - 8, y: y + 3, "text-anchor": "end", class: "tick" });
+    t.textContent = yfmt(val); svg.append(t);
+  }
+  const decades = [];
+  for (let p = Math.ceil(Math.log10(xlo)); p <= Math.log10(xhi) + 1e-9; p++) decades.push(Math.pow(10, p));
+  decades.forEach(v => {
+    if (v < xlo || v > xhi) return;
+    const x = logx(v, xlo, xhi, w, P);
+    svg.append(S("line", { x1: x, x2: x, y1: P.t, y2: h - P.b, stroke: "var(--grid)", "stroke-width": 1 }));
+    const t = S("text", { x, y: h - P.b + 15, "text-anchor": "middle", class: "tick" });
+    t.textContent = v >= 1 ? "100%" : (100 * v) + "%"; svg.append(t);
+  });
+  svg.append(S("line", { x1: P.l, x2: w - P.r, y1: h - P.b, y2: h - P.b,
+    stroke: "var(--axis)", "stroke-width": 1 }));
+  svg.append(S("line", { x1: P.l, x2: P.l, y1: P.t, y2: h - P.b,
+    stroke: "var(--axis)", "stroke-width": 1 }));
+  const xl = S("text", { x: (P.l + w - P.r) / 2, y: h - 6, "text-anchor": "middle", class: "axlabel" });
+  xl.textContent = xlabel; svg.append(xl);
+  const yl = S("text", { x: 11, y: (P.t + h - P.b) / 2, class: "axlabel",
+    transform: `rotate(-90 11 ${(P.t + h - P.b) / 2})`, "text-anchor": "middle" });
+  yl.textContent = ylabel; svg.append(yl);
+}
+
+function drawMoney() {
+  const host = document.getElementById("fig1a"); host.textContent = "";
+  const w = 860, h = 300, c = CURVE;
+  const P = padFor(96);
+  const xlo = 1e-5, xhi = 1;
+  /* Clipped deliberately. The curve reaches −₹62.8 cr at 100% flagged; plotting
+     that range would compress the entire useful band into the top 4% of the
+     panel. The out-of-range part is drawn dashed and annotated so it can never
+     be mistaken for measured values sitting on the floor. */
+  const ylo = -4e7, yhi = 2.5e7;
+  const svg = frame(w, h, "Net saving in rupees against share of traffic flagged for review");
+  axes(svg, w, h, xlo, xhi, ylo, yhi, v => F.inrShort(v),
+       "share of traffic flagged (log)", "net saving", 5, P);
+  const Y = v => h - P.b - (Math.min(Math.max(v, ylo), yhi) - ylo) / (yhi - ylo) * (h - P.t - P.b);
+  const X = v => logx(v, xlo, xhi, w, P);
+
+  const y0 = Y(0);
+  svg.append(S("line", { x1: P.l, x2: w - P.r, y1: y0, y2: y0,
+    stroke: "var(--axis)", "stroke-width": 1, "stroke-dasharray": "3 3" }));
+  const zt = S("text", { x: w - P.r, y: y0 - 5, "text-anchor": "end", class: "tick" });
+  zt.textContent = "break-even"; svg.append(zt);
+
+  const inRange = c.filter(r => r.net_saving_inr >= ylo);
+  const below = c.filter(r => r.net_saving_inr < ylo);
+  svg.append(S("polyline", {
+    points: inRange.map(r => `${X(r.flag_rate)},${Y(r.net_saving_inr)}`).join(" "),
+    fill: "none", stroke: "var(--series-1)", "stroke-width": 2, "stroke-linejoin": "round" }));
+
+  if (below.length) {
+    const x1 = X(Math.min(...below.map(r => r.flag_rate)));
+    const x2 = X(Math.max(...below.map(r => r.flag_rate)));
+    const yf = Y(ylo);
+    svg.append(S("line", { x1, x2, y1: yf, y2: yf, stroke: "var(--series-1)",
+      "stroke-width": 2, "stroke-dasharray": "2 4", opacity: .75 }));
+    const worst = c.reduce((a, b) => b.net_saving_inr < a.net_saving_inr ? b : a);
+    const lab = S("text", { x: w - P.r, y: yf - 8, "text-anchor": "end",
+      class: "tick", fill: "var(--invalid)" });
+    lab.textContent = "off scale \u2193 to " + F.inrShort(worst.net_saving_inr);
+    svg.append(lab);
+  }
+
+  const best = c.reduce((a, b) => b.net_saving_inr > a.net_saving_inr ? b : a);
+  const bx = X(best.flag_rate), by = Y(best.net_saving_inr);
+  svg.append(S("circle", { cx: bx, cy: by, r: 4.5, fill: "var(--series-1)",
+    stroke: "var(--surface)", "stroke-width": 2 }));
+  const bl = S("text", { x: bx + 10, y: by - 9, class: "tick", fill: "var(--text-primary)" });
+  bl.textContent = "optimum " + F.inrShort(best.net_saving_inr); svg.append(bl);
+
+  svg.append(S("line", { id: "m1", x1: 0, x2: 0, y1: P.t, y2: h - P.b,
+    stroke: "var(--text-primary)", "stroke-width": 1 }));
+  host.append(svg);
+  MARKX.m1 = { w, P, xlo, xhi };
+}
+
+function drawPR() {
+  const host = document.getElementById("fig1b"); host.textContent = "";
+  const w = 860, h = 260, c = CURVE, xlo = 1e-5, xhi = 1;
+  const P = padFor(66);
+  const svg = frame(w, h, "Precision and recall against share of traffic flagged for review");
+  axes(svg, w, h, xlo, xhi, 0, 1, v => v.toFixed(1),
+       "share of traffic flagged (log)", "proportion", 5, P);
+  const Y = v => h - P.b - v * (h - P.t - P.b);
+  const X = v => logx(v, xlo, xhi, w, P);
+  /* Direct-label at an interior point where both curves are well inside the
+     panel. Labelling the endpoints fails at both ends here: at 100% flagged
+     recall is 1.0 and precision is 0.03, so the labels land on the frame edges;
+     at the low end (the raw array's last element) they stack on the y-axis. */
+  const anchor = c.reduce((a, b) =>
+    Math.abs(b.flag_rate - 4e-3) < Math.abs(a.flag_rate - 4e-3) ? b : a);
+  [["precision", "var(--series-1)", 16], ["recall", "var(--series-2)", -9]]
+    .forEach(([k, col, dy]) => {
+      svg.append(S("polyline", {
+        points: c.map(r => `${X(r.flag_rate)},${Y(r[k])}`).join(" "),
+        fill: "none", stroke: col, "stroke-width": 2, "stroke-linejoin": "round" }));
+      const t = S("text", { x: X(anchor.flag_rate) + 8, y: Y(anchor[k]) + dy,
+        class: "tick", fill: col });
+      t.textContent = k; svg.append(t);
+    });
+  svg.append(S("line", { id: "m2", x1: 0, x2: 0, y1: P.t, y2: h - P.b,
+    stroke: "var(--text-primary)", "stroke-width": 1 }));
+  host.append(svg);
+  MARKX.m2 = { w, P, xlo, xhi };
+}
+
+function moveMarkers(r) {
+  for (const [id, g] of Object.entries(MARKX)) {
+    const m = document.getElementById(id); if (!m) continue;
+    const x = logx(r.flag_rate, g.xlo, g.xhi, g.w, g.P);
+    m.setAttribute("x1", x); m.setAttribute("x2", x);
+  }
+}
+
+/* ---------- ablation figure ---------- */
+function drawAblation(active) {
+  const host = document.getElementById("fig2"); host.textContent = "";
+  const keys = ["honest", "lag0", "whole_frame"];
+  const w = 860, h = 240, panelW = (w - 40) / 2;
+  const svg = frame(w, h, "PR-AUC and net saving under each ablation variant");
+  const panels = [
+    { x: 0, title: "PR-AUC", max: 1.0, get: k => D.ablation[k].pr_auc, fmt: v => v.toFixed(3) },
+    { x: panelW + 40, title: "net saving", max: 6e7, get: k => D.ablation[k].net_saving_inr, fmt: F.inrShort }
+  ];
+  panels.forEach(p => {
+    const x0 = p.x + 58, plotW = panelW - 66, plotH = h - 78;
+    const t = S("text", { x: p.x + 4, y: 14, class: "axlabel" }); t.textContent = p.title; svg.append(t);
+    for (let i = 0; i <= 4; i++) {
+      const val = p.max * i / 4, y = 26 + plotH - (val / p.max) * plotH;
+      svg.append(S("line", { x1: x0, x2: x0 + plotW, y1: y, y2: y, stroke: "var(--grid)", "stroke-width": 1 }));
+      const lt = S("text", { x: x0 - 7, y: y + 3, "text-anchor": "end", class: "tick" });
+      lt.textContent = p.fmt(val); svg.append(lt);
+    }
+    const bw = plotW / keys.length * 0.52;
+    keys.forEach((k, i) => {
+      const v = p.get(k);
+      const cx = x0 + plotW * (i + 0.5) / keys.length;
+      const bh = Math.max((v / p.max) * plotH, 1);
+      const invalid = k !== "honest";
+      const isActive = k === active;
+      svg.append(S("rect", {
+        x: cx - bw / 2, y: 26 + plotH - bh, width: bw, height: bh, rx: 3,
+        fill: invalid ? "var(--invalid)" : "var(--series-1)",
+        opacity: isActive ? 1 : 0.55,
+        stroke: "var(--surface)", "stroke-width": 2
+      }));
+      const vl = S("text", { x: cx, y: 26 + plotH - bh - 6, "text-anchor": "middle",
+        class: "tick", fill: "var(--text-primary)" });
+      vl.textContent = p.fmt(v); svg.append(vl);
+      const nl = S("text", { x: cx, y: 26 + plotH + 15, "text-anchor": "middle", class: "tick" });
+      nl.textContent = k; svg.append(nl);
+    });
+  });
+  host.append(svg);
+}
+
+/* ---------- render ---------- */
+function render() {
+  const d = D;
+
+  const meta = document.getElementById("meta");
+  const rows = [
+    ["Dataset", `<a href="${d.dataset.url}">IEEE-CIS</a>`],
+    ["Transactions", F.int(d.dataset.n_total)],
+    ["Train / held-out", `${F.int(d.dataset.n_train)} / ${F.int(d.dataset.n_test)}`],
+    ["Fraud rate", F.pct(d.dataset.prevalence, 2)],
+    ["Split", "temporal, 7-day embargo"],
+    ["Commit", d.commit],
+    ["Built", d.generated_at]
+  ];
+  rows.forEach(([k, v]) => {
+    meta.append(el("dt", {}, k));
+    const dd = el("dd"); dd.innerHTML = v; meta.append(dd);
+  });
+
+  // Table 1
+  const t1 = document.getElementById("t-results");
+  const n = d.noring;
+  const r1 = [
+    ["PR-AUC", F.n(d.headline.pr_auc), F.n(n.headline.pr_auc)],
+    ["ROC-AUC", F.n(d.headline.roc_auc), F.n(n.headline.roc_auc)],
+    ["precision@100", F.n(d.precision_at_k[0]["precision@k"], 3), F.n(n.precision_at_k[0]["precision@k"], 3)],
+    ["precision@1000", F.n(d.precision_at_k[2]["precision@k"], 3), F.n(n.precision_at_k[2]["precision@k"], 3)],
+    ["recall @ 0.5% FP", F.n(d.recall_at_fp_budget[1].recall, 3), F.n(n.recall_at_fp_budget[1].recall, 3)],
+    ["net saving", F.inr(d.optimal.net_saving_inr), F.inr(n.optimal.net_saving_inr)],
+    ["boosting rounds", F.int(d.best_iteration), F.int(n.best_iteration)]
+  ];
+  t1.append(el("thead", {}, el("tr", {}, [el("th", {}, "Measure"),
+    el("th", {}, "With rings"), el("th", {}, "Without rings"), el("th", {}, "Δ")])));
+  const tb1 = el("tbody");
+  r1.forEach(([k, a, b]) => {
+    const av = parseFloat(String(a).replace(/[^0-9.\-]/g, ""));
+    const bv = parseFloat(String(b).replace(/[^0-9.\-]/g, ""));
+    const delta = bv ? ((av - bv) / Math.abs(bv) * 100) : 0;
+    const sign = delta >= 0 ? "+" : "";
+    tb1.append(el("tr", {}, [el("td", {}, k), el("td", {}, a), el("td", {}, b),
+      el("td", {}, k === "boosting rounds" ? "—" : sign + delta.toFixed(1) + "%")]));
+  });
+  t1.append(tb1);
+
+  document.getElementById("headline-tiles").innerHTML = `
+    <div class="tile"><span class="k">PR-AUC</span><span class="v">${F.n(d.headline.pr_auc)}</span>
+      <span class="s">${d.headline.pr_auc_lift_over_baseline.toFixed(1)}× the ${F.n(d.dataset.prevalence, 4)} baseline</span></div>
+    <div class="tile"><span class="k">ROC-AUC</span><span class="v">${F.n(d.headline.roc_auc)}</span>
+      <span class="s">the flattering one</span></div>
+    <div class="tile"><span class="k">Ring feature gain</span><span class="v">${d.ring_feature_gain_pct.toFixed(1)}%</span>
+      <span class="s">of top-50 model gain</span></div>
+    <div class="tile"><span class="k">Multi-card rings</span><span class="v">${F.int(d.ring_diagnostics.n_multi_client_rings)}</span>
+      <span class="s">${F.int(d.ring_diagnostics.clients_in_multi_rings)} linked cards</span></div>`;
+
+  // Figures 1a / 1b
+  drawMoney(); drawPR();
+  const worst = d.cost_curve.reduce((a, b) => b.net_saving_inr < a.net_saving_inr ? b : a);
+  document.getElementById("worst-loss").textContent = F.inr(worst.net_saving_inr);
+
+  const slider = document.getElementById("thr");
+  const ordered = CURVE;
+  slider.max = ordered.length - 1;
+  const bestIdx = ordered.indexOf(ordered.reduce((a, b) => b.net_saving_inr > a.net_saving_inr ? b : a));
+  const paint = i => {
+    const r = ordered[i];
+    document.getElementById("thr-readout").textContent =
+      "score ≥ " + r.threshold.toFixed(4) + " · " + F.pct(r.flag_rate, 2) + " flagged";
+    document.getElementById("op-tiles").innerHTML = `
+      <div class="tile"><span class="k">Net saving</span>
+        <span class="v ${r.net_saving_inr >= 0 ? "pos" : "neg"}">${F.inrShort(r.net_saving_inr)}</span>
+        <span class="s">vs ${F.inrShort(d.baseline_loss_inr)} baseline loss</span></div>
+      <div class="tile"><span class="k">Precision</span><span class="v">${F.n(r.precision, 3)}</span>
+        <span class="s">${F.int(r.tp)} true / ${F.int(r.fp)} false</span></div>
+      <div class="tile"><span class="k">Recall</span><span class="v">${F.n(r.recall, 3)}</span>
+        <span class="s">${F.int(r.fn)} frauds missed</span></div>
+      <div class="tile"><span class="k">Customers blocked</span><span class="v">${F.int(r.fp)}</span>
+        <span class="s">legitimate, wrongly declined</span></div>`;
+    moveMarkers(r);
+  };
+  slider.value = bestIdx; paint(bestIdx);
+  slider.addEventListener("input", e => paint(+e.target.value));
+
+  // curve table view
+  const ct = document.getElementById("curve-table");
+  const tbl = el("table");
+  tbl.append(el("thead", {}, el("tr", {}, ["Flagged", "Threshold", "Precision", "Recall", "False pos.", "Net saving"]
+    .map(h => el("th", {}, h)))));
+  const ctb = el("tbody");
+  ordered.filter((_, i) => i % 4 === 0).forEach(r => ctb.append(el("tr", {}, [
+    el("td", {}, F.pct(r.flag_rate, 3)), el("td", {}, r.threshold.toFixed(4)),
+    el("td", {}, F.n(r.precision, 3)), el("td", {}, F.n(r.recall, 3)),
+    el("td", {}, F.int(r.fp)), el("td", {}, F.inr(r.net_saving_inr))])));
+  tbl.append(ctb); ct.append(tbl);
+  const tt = document.getElementById("toggle-table");
+  tt.addEventListener("click", () => {
+    const open = ct.hidden;
+    ct.hidden = !open; tt.setAttribute("aria-expanded", String(open));
+    tt.textContent = open ? "Hide the table" : "Show Figure 1 as a table";
+  });
+
+  // Ablation
+  const labels = {
+    honest: ["honest", "causal features, 30-day reporting lag (shipped)"],
+    lag0: ["lag0", "chargebacks known the instant they happen"],
+    whole_frame: ["whole_frame", "ring statistics over the entire dataset"]
+  };
+  const seg = document.getElementById("ab-seg");
+  let active = "honest";
+  Object.keys(labels).forEach(k => {
+    const b = el("button", { type: "button", "aria-pressed": String(k === active) }, labels[k][0]);
+    b.addEventListener("click", () => { active = k; paintAb(); });
+    seg.append(b);
+  });
+  const paintAb = () => {
+    [...seg.children].forEach(b => b.setAttribute("aria-pressed", String(b.textContent === labels[active][0])));
+    const v = d.ablation[active], base = d.ablation.honest;
+    const inflated = active !== "honest";
+    document.getElementById("ab-tiles").innerHTML = `
+      <div class="tile"><span class="k">Assumes</span>
+        <span class="v" style="font-size:.82rem;line-height:1.4">${labels[active][1]}</span></div>
+      <div class="tile"><span class="k">PR-AUC</span>
+        <span class="v ${inflated ? "neg" : ""}">${F.n(v.pr_auc)}</span>
+        <span class="s">${inflated ? "+" + ((v.pr_auc - base.pr_auc) / base.pr_auc * 100).toFixed(1) + "% overstated" : "the honest figure"}</span></div>
+      <div class="tile"><span class="k">Net saving</span>
+        <span class="v ${inflated ? "neg" : ""}">${F.inrShort(v.net_saving_inr)}</span>
+        <span class="s">${inflated ? (v.net_saving_inr / base.net_saving_inr).toFixed(2) + "× the true figure" : "measured"}</span></div>
+      <div class="tile"><span class="k">Status</span>
+        <span class="v" style="font-size:.9rem">${inflated ? "invalid" : "valid"}</span>
+        <span class="s">${inflated ? "assumption cannot hold in production" : "reproducible"}</span></div>`;
+    drawAblation(active);
+  };
+  paintAb();
+
+  // Ring queue
+  const t3 = document.getElementById("t-rings");
+  t3.append(el("thead", {}, el("tr", {}, ["Ring", "Cards", "Tx", "Value", "Span", "Amount CV", "Peak score"]
+    .map(h => el("th", {}, h)))));
+  const tb3 = el("tbody");
+  d.rings.forEach((r, i) => {
+    const tr = el("tr", { tabindex: "0", role: "button", "aria-selected": String(i === 0) }, [
+      el("td", {}, "#" + r.ring_id), el("td", {}, F.int(r.n_clients)),
+      el("td", {}, F.int(r.n_transactions)), el("td", {}, F.inrShort(r.total_amount_inr)),
+      el("td", {}, r.span_days.toFixed(2) + " d"), el("td", {}, r.amount_cv.toFixed(3)),
+      el("td", {}, F.n(r.max_fraud_score, 3))]);
+    const sel = () => {
+      [...tb3.children].forEach(x => x.setAttribute("aria-selected", "false"));
+      tr.setAttribute("aria-selected", "true"); showCase(r);
+    };
+    tr.addEventListener("click", sel);
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sel(); } });
+    tb3.append(tr);
+  });
+  t3.append(tb3);
+  showCase(d.rings[0]);
+
+  // Limitations
+  const lim = [
+    `<strong>Ring features are ${d.ring_feature_gain_pct.toFixed(1)}% of model gain</strong>, not a majority. The dataset's own
+     count and velocity columns already carry substantial signal. The ablation shows the ring layer adds
+     real value; it does not dominate, and this page does not claim it does.`,
+    `<strong>${F.pct(d.ring_diagnostics.clients_in_multi_rings / d.ring_diagnostics.n_clients)} of cards fall in a multi-card ring.</strong>
+     For the rest, Ringfence contributes little beyond conventional features. This detects organised abuse,
+     not lone-actor fraud.`,
+    `<strong>The cost model is parameterised, not measured.</strong> Chargeback fees and churn multipliers vary by
+     merchant category. The method is the contribution; the constants are defaults and are listed in
+     <code>config.py</code>.`,
+    `<strong>Rings larger than 50 cards are fragmented</strong> by a size cap that prevents the entity graph
+     percolating into one giant component. Defensible operationally, but very large networks are seen only in pieces.`,
+    `<strong>IEEE-CIS is US e-commerce, circa 2018.</strong> Indian cash-on-delivery and return-to-origin dynamics
+     differ. Amounts are converted at a flat ${d.cost_model.usd_inr} INR/USD rather than modelled.`
+  ];
+  const ul = document.getElementById("limits-list");
+  lim.forEach(t => { const li = el("li"); li.innerHTML = t; ul.append(li); });
+
+  document.getElementById("foot").innerHTML =
+    `Generated ${d.generated_at} from commit <code>${d.commit}</code>. ` +
+    `Defense-only: this system detects and responds to fraud and contains no offense-capable code. ` +
+    `Built for the Razorpay AI Buildathon, Track 02.`;
+}
+
+function showCase(r) {
+  const host = document.getElementById("case-panel");
+  const c = r.case_file;
+  if (!c) { host.innerHTML = ""; return; }
+  const links = Object.entries(r.shared_attributes || {})
+    .map(([k, v]) => `<code>${k}</code> — ${v.join("; ")}`).join("<br>") || "—";
+  host.innerHTML = `
+    <div class="case">
+      <div style="display:flex;justify-content:space-between;gap:1rem;align-items:start;flex-wrap:wrap;margin-bottom:1rem">
+        <strong style="font-size:1rem;max-width:38rem">${c.headline}</strong>
+        <span class="badge b-${c.recommended_action}">${c.recommended_action.replace("_", " ")} · ${c.confidence}</span>
+      </div>
+      <dl>
+        <div><dt>What links them</dt><dd>${c.what_links_them}</dd></div>
+        <div><dt>Shared attribute values</dt><dd style="font-family:var(--mono);font-size:.8rem">${links}</dd></div>
+        <div><dt>Why suspicious</dt><dd>${c.why_suspicious}</dd></div>
+        <div><dt>Most plausible innocent explanation</dt><dd>${c.innocent_explanation}</dd></div>
+        <div><dt>What would change the call</dt><dd>${c.what_would_change_the_call}</dd></div>
+      </dl>
+    </div>`;
+}
+</script>
+</body>
+</html>

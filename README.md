@@ -121,6 +121,21 @@ ringfence agent                           # needs OPENROUTER_API_KEY in .env
 Every command wraps a script in `scripts/`, which stay runnable directly —
 that is how the numbers above were produced.
 
+## Results page
+
+An interactive report lives in [`docs/`](docs/) and is served by GitHub Pages:
+held-out metrics, a draggable cost-optimal threshold, the leakage ablation, and
+the ring review queue with generated case files.
+
+```bash
+ringfence site                  # rebuild docs/data.json from reports/
+python -m http.server --directory docs   # preview at localhost:8000
+```
+
+Nothing on that page is hand-written or simulated: `scripts/build_site.py`
+regenerates `docs/data.json` from `reports/`, so the page cannot drift from the
+experiment that produced it.
+
 ## Scope and safety
 
 The Buildathon brief for this track states: *"Strictly defense-only: anything

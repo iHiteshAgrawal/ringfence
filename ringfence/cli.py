@@ -112,6 +112,20 @@ def agent(
 
 
 @app.command()
+def site(
+    rings: int = typer.Option(5, help="How many rings to include in the queue."),
+    with_casefiles: bool = typer.Option(
+        False, help="Regenerate ring case files (costs an API call each)."
+    ),
+) -> None:
+    """Rebuild docs/data.json for the GitHub Pages report from reports/."""
+    args = ["--rings", str(rings)]
+    if with_casefiles:
+        args.append("--with-casefiles")
+    _run("build_site.py", *args)
+
+
+@app.command()
 def status() -> None:
     """Show what data, models and results are present."""
     def mark(p: Path) -> str:

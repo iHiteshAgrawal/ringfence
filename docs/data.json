@@ -1,0 +1,1605 @@
+{
+ "generated_at": "2026-08-31 19:32 UTC",
+ "commit": "cde8651",
+ "dataset": {
+  "name": "IEEE-CIS Fraud Detection",
+  "url": "https://www.kaggle.com/competitions/ieee-fraud-detection/data",
+  "n_total": 590540,
+  "n_train": 453779,
+  "n_test": 118108,
+  "prevalence": 0.034409184813899145
+ },
+ "headline": {
+  "n": 118108,
+  "prevalence": 0.034409184813899145,
+  "pr_auc": 0.5986280158791669,
+  "pr_auc_lift_over_baseline": 17.397332111086772,
+  "roc_auc": 0.9307007761992401
+ },
+ "optimal": {
+  "threshold": 0.4000451026361955,
+  "flag_rate": 0.025129542452670437,
+  "tp": 2056.0,
+  "fp": 912.0,
+  "fn": 2008.0,
+  "precision": 0.692722371967655,
+  "recall": 0.5059055118110236,
+  "loss_avoided_inr": 24480923.595983505,
+  "fraud_loss_inr": 35289297.94343758,
+  "fp_friction_inr": 6004127.048625946,
+  "review_cost_inr": 0.0,
+  "total_loss_inr": 41293424.99206352,
+  "net_saving_inr": 18476796.54735756
+ },
+ "baseline_loss_inr": 59770221.53942108,
+ "cost_model": {
+  "chargeback_fee_inr": 1500.0,
+  "fraud_loss_rate": 1.0,
+  "gross_margin_rate": 0.25,
+  "churn_multiplier": 2.0,
+  "usd_inr": 88.0,
+  "review_cost_inr": 0.0
+ },
+ "precision_at_k": [
+  {
+   "k": 100,
+   "precision@k": 0.98,
+   "recall@k": 0.024114173228346455,
+   "frauds_caught": 98
+  },
+  {
+   "k": 500,
+   "precision@k": 0.934,
+   "recall@k": 0.11491141732283465,
+   "frauds_caught": 467
+  },
+  {
+   "k": 1000,
+   "precision@k": 0.905,
+   "recall@k": 0.22268700787401574,
+   "frauds_caught": 905
+  },
+  {
+   "k": 5000,
+   "precision@k": 0.4938,
+   "recall@k": 0.6075295275590551,
+   "frauds_caught": 2469
+  }
+ ],
+ "recall_at_fp_budget": [
+  {
+   "fp_budget": 0.001,
+   "threshold": 0.8692559801042409,
+   "recall": 0.26131889763779526,
+   "precision": 0.9030612244897959,
+   "false_positives": 114
+  },
+  {
+   "fp_budget": 0.005,
+   "threshold": 0.5246921954969076,
+   "recall": 0.45595472440944884,
+   "precision": 0.7647544366487825,
+   "false_positives": 570
+  },
+  {
+   "fp_budget": 0.01,
+   "threshold": 0.34772752133603574,
+   "recall": 0.5236220472440944,
+   "precision": 0.6511627906976745,
+   "false_positives": 1140
+  },
+  {
+   "fp_budget": 0.05,
+   "threshold": 0.09022602823817963,
+   "recall": 0.7106299212598425,
+   "precision": 0.3362048894062864,
+   "false_positives": 5702
+  }
+ ],
+ "top_features": [
+  {
+   "feature": "V200",
+   "gain": 39129.99227285385,
+   "split": 21,
+   "gain_pct": 6.071231862463671,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "C14",
+   "gain": 27904.833315372467,
+   "split": 248,
+   "gain_pct": 4.329587186209559,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "C8",
+   "gain": 26471.589416980743,
+   "split": 45,
+   "gain_pct": 4.107211573101296,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "C13",
+   "gain": 26163.41600728035,
+   "split": 480,
+   "gain_pct": 4.059396786655884,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "DeviceInfo",
+   "gain": 24261.10202908516,
+   "split": 523,
+   "gain_pct": 3.7642423906034996,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "ring_known_fraud_rate",
+   "gain": 24206.153658628464,
+   "split": 193,
+   "gain_pct": 3.755716851033215,
+   "is_ring_feature": true
+  },
+  {
+   "feature": "C1",
+   "gain": 24008.09764266014,
+   "split": 299,
+   "gain_pct": 3.7249873792174566,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "C4",
+   "gain": 21892.09569644928,
+   "split": 49,
+   "gain_pct": 3.3966781286740355,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "card2",
+   "gain": 15112.926808834076,
+   "split": 1040,
+   "gain_pct": 2.3448530768182283,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "D2",
+   "gain": 14838.426223039627,
+   "split": 378,
+   "gain_pct": 2.3022628127793476,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "addr1",
+   "gain": 14750.260300159454,
+   "split": 941,
+   "gain_pct": 2.288583388657791,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "R_emaildomain",
+   "gain": 13488.996321439743,
+   "split": 236,
+   "gain_pct": 2.092891398708355,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "V189",
+   "gain": 12514.27574300766,
+   "split": 38,
+   "gain_pct": 1.941658181192969,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "TransactionAmt",
+   "gain": 12260.747461557388,
+   "split": 677,
+   "gain_pct": 1.9023218846344752,
+   "is_ring_feature": false
+  },
+  {
+   "feature": "P_emaildomain",
+   "gain": 11385.19132065773,
+   "split": 576,
+   "gain_pct": 1.7664745708159784,
+   "is_ring_feature": false
+  }
+ ],
+ "ring_feature_gain_pct": 7.920356058237717,
+ "ring_diagnostics": {
+  "n_clients": 222477,
+  "n_rings_final": 168613,
+  "n_multi_client_rings": 7865,
+  "clients_in_multi_rings": 61729,
+  "largest_ring_clients": 50,
+  "pct_in_largest": 0.02247423329153126,
+  "hub_demotions": {
+   "card1": 1298,
+   "addr1": 76,
+   "P_emaildomain": 57,
+   "R_emaildomain": 52,
+   "DeviceInfo": 232
+  },
+  "edges_made": {
+   "card1": 62379,
+   "addr1": 1274,
+   "P_emaildomain": 370,
+   "R_emaildomain": 319,
+   "DeviceInfo": 5533
+  },
+  "merges_refused_by_size_cap": {
+   "card1": 14142,
+   "addr1": 1195,
+   "P_emaildomain": 1063,
+   "R_emaildomain": 1091,
+   "DeviceInfo": 7800
+  },
+  "max_shared_clients": 20,
+  "max_ring_clients": 50
+ },
+ "noring": {
+  "headline": {
+   "n": 118108,
+   "prevalence": 0.034409184813899145,
+   "pr_auc": 0.5027295684728635,
+   "pr_auc_lift_over_baseline": 14.610330677458899,
+   "roc_auc": 0.8891711626463
+  },
+  "optimal": {
+   "threshold": 0.39547611451346787,
+   "flag_rate": 0.020108714058319505,
+   "tp": 1591.0,
+   "fp": 784.0,
+   "fn": 2473.0,
+   "precision": 0.6698947368421052,
+   "recall": 0.39148622047244097,
+   "loss_avoided_inr": 17299625.74366951,
+   "fraud_loss_inr": 42470595.79575157,
+   "fp_friction_inr": 4464554.027298212,
+   "review_cost_inr": 0.0,
+   "total_loss_inr": 46935149.82304978,
+   "net_saving_inr": 12835071.716371298
+  },
+  "precision_at_k": [
+   {
+    "k": 100,
+    "precision@k": 1.0,
+    "recall@k": 0.024606299212598427,
+    "frauds_caught": 100
+   },
+   {
+    "k": 500,
+    "precision@k": 0.926,
+    "recall@k": 0.11392716535433071,
+    "frauds_caught": 463
+   },
+   {
+    "k": 1000,
+    "precision@k": 0.881,
+    "recall@k": 0.21678149606299213,
+    "frauds_caught": 881
+   },
+   {
+    "k": 5000,
+    "precision@k": 0.43,
+    "recall@k": 0.5290354330708661,
+    "frauds_caught": 2150
+   }
+  ],
+  "recall_at_fp_budget": [
+   {
+    "fp_budget": 0.001,
+    "threshold": 0.8849763743877571,
+    "recall": 0.21161417322834647,
+    "precision": 0.8829568788501027,
+    "false_positives": 114
+   },
+   {
+    "fp_budget": 0.005,
+    "threshold": 0.4720494415024881,
+    "recall": 0.36195866141732286,
+    "precision": 0.7207251347378736,
+    "false_positives": 570
+   },
+   {
+    "fp_budget": 0.01,
+    "threshold": 0.3133733030865653,
+    "recall": 0.421751968503937,
+    "precision": 0.6005606166783461,
+    "false_positives": 1140
+   },
+   {
+    "fp_budget": 0.05,
+    "threshold": 0.09007270590155488,
+    "recall": 0.6149114173228346,
+    "precision": 0.30471893671503475,
+    "false_positives": 5702
+   }
+  ],
+  "best_iteration": 735
+ },
+ "best_iteration": 233,
+ "ablation": {
+  "honest": {
+   "label": "causal features, 30d reporting lag (shipped)",
+   "pr_auc": 0.5986280158791669,
+   "roc_auc": 0.9307007761992401,
+   "net_saving_inr": 18476796.54735756,
+   "precision_at_100": 0.98
+  },
+  "lag0": {
+   "label": "chargebacks known instantly (impossible)",
+   "pr_auc": 0.9691465832405811,
+   "roc_auc": 0.9985558287594206,
+   "net_saving_inr": 52814554.0730052,
+   "precision_at_100": 1.0
+  },
+  "whole_frame": {
+   "label": "ring aggregates over the whole dataset (classic leak)",
+   "pr_auc": 0.9612079748372258,
+   "roc_auc": 0.9981762590526602,
+   "net_saving_inr": 52264199.5036788,
+   "precision_at_100": 1.0
+  }
+ },
+ "cost_curve": [
+  {
+   "threshold": 0.000267,
+   "flag_rate": 1.0,
+   "tp": 4064,
+   "fp": 114044,
+   "fn": 0,
+   "precision": 0.034409,
+   "recall": 1.0,
+   "net_saving_inr": -628103682.512494,
+   "fp_friction_inr": 687873904.051916,
+   "fraud_loss_inr": 0.0
+  },
+  {
+   "threshold": 0.00062,
+   "flag_rate": 0.979891,
+   "tp": 4064,
+   "fp": 111669,
+   "fn": 0,
+   "precision": 0.035115,
+   "recall": 1.0,
+   "net_saving_inr": -621981517.647186,
+   "fp_friction_inr": 681751739.186607,
+   "fraud_loss_inr": 0.0
+  },
+  {
+   "threshold": 0.000746,
+   "flag_rate": 0.959791,
+   "tp": 4064,
+   "fp": 109295,
+   "fn": 0,
+   "precision": 0.035851,
+   "recall": 1.0,
+   "net_saving_inr": -614785574.21397,
+   "fp_friction_inr": 674555795.753391,
+   "fraud_loss_inr": 0.0
+  },
+  {
+   "threshold": 0.000855,
+   "flag_rate": 0.939691,
+   "tp": 4063,
+   "fp": 106922,
+   "fn": 1,
+   "precision": 0.036609,
+   "recall": 0.999754,
+   "net_saving_inr": -606835927.769779,
+   "fp_friction_inr": 666599549.709132,
+   "fraud_loss_inr": 6599.600067
+  },
+  {
+   "threshold": 0.000959,
+   "flag_rate": 0.919591,
+   "tp": 4062,
+   "fp": 104549,
+   "fn": 2,
+   "precision": 0.0374,
+   "recall": 0.999508,
+   "net_saving_inr": -598475006.678964,
+   "fp_friction_inr": 658227629.018586,
+   "fraud_loss_inr": 17599.199799
+  },
+  {
+   "threshold": 0.001063,
+   "flag_rate": 0.89949,
+   "tp": 4062,
+   "fp": 102175,
+   "fn": 2,
+   "precision": 0.038235,
+   "recall": 0.999508,
+   "net_saving_inr": -589560459.326642,
+   "fp_friction_inr": 649313081.666264,
+   "fraud_loss_inr": 17599.199799
+  },
+  {
+   "threshold": 0.001168,
+   "flag_rate": 0.87939,
+   "tp": 4062,
+   "fp": 99801,
+   "fn": 2,
+   "precision": 0.039109,
+   "recall": 0.999508,
+   "net_saving_inr": -580168717.579909,
+   "fp_friction_inr": 639921339.919532,
+   "fraud_loss_inr": 17599.199799
+  },
+  {
+   "threshold": 0.00128,
+   "flag_rate": 0.85929,
+   "tp": 4060,
+   "fp": 97429,
+   "fn": 4,
+   "precision": 0.040004,
+   "recall": 0.999016,
+   "net_saving_inr": -570298033.758851,
+   "fp_friction_inr": 630032964.498742,
+   "fraud_loss_inr": 35290.79953
+  },
+  {
+   "threshold": 0.001402,
+   "flag_rate": 0.83919,
+   "tp": 4056,
+   "fp": 95059,
+   "fn": 8,
+   "precision": 0.040922,
+   "recall": 0.998031,
+   "net_saving_inr": -559852747.145905,
+   "fp_friction_inr": 619557843.085931,
+   "fraud_loss_inr": 65125.599396
+  },
+  {
+   "threshold": 0.001529,
+   "flag_rate": 0.819089,
+   "tp": 4054,
+   "fp": 92687,
+   "fn": 10,
+   "precision": 0.041906,
+   "recall": 0.997539,
+   "net_saving_inr": -548809307.687713,
+   "fp_friction_inr": 608499620.427939,
+   "fraud_loss_inr": 79908.799194
+  },
+  {
+   "threshold": 0.001661,
+   "flag_rate": 0.798989,
+   "tp": 4052,
+   "fp": 90315,
+   "fn": 12,
+   "precision": 0.042939,
+   "recall": 0.997047,
+   "net_saving_inr": -538328211.762946,
+   "fp_friction_inr": 598006020.503173,
+   "fraud_loss_inr": 92412.799194
+  },
+  {
+   "threshold": 0.001811,
+   "flag_rate": 0.778889,
+   "tp": 4048,
+   "fp": 87945,
+   "fn": 16,
+   "precision": 0.044003,
+   "recall": 0.996063,
+   "net_saving_inr": -526310494.458726,
+   "fp_friction_inr": 585969296.798684,
+   "fraud_loss_inr": 111419.199463
+  },
+  {
+   "threshold": 0.00198,
+   "flag_rate": 0.758789,
+   "tp": 4046,
+   "fp": 85573,
+   "fn": 18,
+   "precision": 0.045147,
+   "recall": 0.995571,
+   "net_saving_inr": -514925115.8945,
+   "fp_friction_inr": 574574318.234458,
+   "fraud_loss_inr": 121019.199463
+  },
+  {
+   "threshold": 0.002152,
+   "flag_rate": 0.738688,
+   "tp": 4042,
+   "fp": 83203,
+   "fn": 22,
+   "precision": 0.046329,
+   "recall": 0.994587,
+   "net_saving_inr": -503779691.486064,
+   "fp_friction_inr": 563402167.97803,
+   "fraud_loss_inr": 147745.047455
+  },
+  {
+   "threshold": 0.002341,
+   "flag_rate": 0.718588,
+   "tp": 4040,
+   "fp": 80831,
+   "fn": 24,
+   "precision": 0.047602,
+   "recall": 0.994094,
+   "net_saving_inr": -492501689.927581,
+   "fp_friction_inr": 552114663.219413,
+   "fraud_loss_inr": 157248.247589
+  },
+  {
+   "threshold": 0.002551,
+   "flag_rate": 0.698488,
+   "tp": 4034,
+   "fp": 78463,
+   "fn": 30,
+   "precision": 0.048899,
+   "recall": 0.992618,
+   "net_saving_inr": -481720469.172413,
+   "fp_friction_inr": 541287187.400944,
+   "fraud_loss_inr": 203503.31089
+  },
+  {
+   "threshold": 0.002771,
+   "flag_rate": 0.678388,
+   "tp": 4032,
+   "fp": 76091,
+   "fn": 32,
+   "precision": 0.050323,
+   "recall": 0.992126,
+   "net_saving_inr": -470483203.885,
+   "fp_friction_inr": 530011022.513799,
+   "fraud_loss_inr": 242402.910622
+  },
+  {
+   "threshold": 0.003011,
+   "flag_rate": 0.658287,
+   "tp": 4029,
+   "fp": 73720,
+   "fn": 35,
+   "precision": 0.051821,
+   "recall": 0.991388,
+   "net_saving_inr": -458702444.132571,
+   "fp_friction_inr": 518201307.561908,
+   "fraud_loss_inr": 271358.110085
+  },
+  {
+   "threshold": 0.003264,
+   "flag_rate": 0.638187,
+   "tp": 4018,
+   "fp": 71357,
+   "fn": 46,
+   "precision": 0.053307,
+   "recall": 0.988681,
+   "net_saving_inr": -447010350.420015,
+   "fp_friction_inr": 506444821.169298,
+   "fraud_loss_inr": 335750.790138
+  },
+  {
+   "threshold": 0.003542,
+   "flag_rate": 0.618087,
+   "tp": 4008,
+   "fp": 68993,
+   "fn": 56,
+   "precision": 0.054903,
+   "recall": 0.98622,
+   "net_saving_inr": -435559695.414976,
+   "fp_friction_inr": 494926410.956663,
+   "fraud_loss_inr": 403505.997734
+  },
+  {
+   "threshold": 0.003842,
+   "flag_rate": 0.597987,
+   "tp": 3999,
+   "fp": 66628,
+   "fn": 65,
+   "precision": 0.056621,
+   "recall": 0.984006,
+   "net_saving_inr": -423371260.796039,
+   "fp_friction_inr": 482661219.474475,
+   "fraud_loss_inr": 480262.860985
+  },
+  {
+   "threshold": 0.004173,
+   "flag_rate": 0.577886,
+   "tp": 3993,
+   "fp": 64260,
+   "fn": 71,
+   "precision": 0.058503,
+   "recall": 0.98253,
+   "net_saving_inr": -410869990.805798,
+   "fp_friction_inr": 470115762.684704,
+   "fraud_loss_inr": 524449.660515
+  },
+  {
+   "threshold": 0.004515,
+   "flag_rate": 0.557786,
+   "tp": 3986,
+   "fp": 61893,
+   "fn": 78,
+   "precision": 0.060505,
+   "recall": 0.980807,
+   "net_saving_inr": -398241296.963077,
+   "fp_friction_inr": 457429878.770465,
+   "fraud_loss_inr": 581639.732033
+  },
+  {
+   "threshold": 0.00489,
+   "flag_rate": 0.537686,
+   "tp": 3978,
+   "fp": 59527,
+   "fn": 86,
+   "precision": 0.062641,
+   "recall": 0.978839,
+   "net_saving_inr": -385711435.493192,
+   "fp_friction_inr": 444857440.820367,
+   "fraud_loss_inr": 624216.212246
+  },
+  {
+   "threshold": 0.005294,
+   "flag_rate": 0.517586,
+   "tp": 3964,
+   "fp": 57167,
+   "fn": 100,
+   "precision": 0.064844,
+   "recall": 0.975394,
+   "net_saving_inr": -372343201.719565,
+   "fp_friction_inr": 431386362.647479,
+   "fraud_loss_inr": 727060.611507
+  },
+  {
+   "threshold": 0.005735,
+   "flag_rate": 0.497485,
+   "tp": 3943,
+   "fp": 54814,
+   "fn": 121,
+   "precision": 0.067107,
+   "recall": 0.970226,
+   "net_saving_inr": -358109064.264702,
+   "fp_friction_inr": 416649544.329826,
+   "fraud_loss_inr": 1229741.474297
+  },
+  {
+   "threshold": 0.006192,
+   "flag_rate": 0.477385,
+   "tp": 3929,
+   "fp": 52454,
+   "fn": 135,
+   "precision": 0.069684,
+   "recall": 0.966781,
+   "net_saving_inr": -341704131.17555,
+   "fp_friction_inr": 400123092.009855,
+   "fraud_loss_inr": 1351260.705116
+  },
+  {
+   "threshold": 0.006739,
+   "flag_rate": 0.457285,
+   "tp": 3919,
+   "fp": 50090,
+   "fn": 145,
+   "precision": 0.072562,
+   "recall": 0.964321,
+   "net_saving_inr": -326185742.598747,
+   "fp_friction_inr": 384405365.437752,
+   "fraud_loss_inr": 1550598.700417
+  },
+  {
+   "threshold": 0.00732,
+   "flag_rate": 0.437185,
+   "tp": 3906,
+   "fp": 47729,
+   "fn": 158,
+   "precision": 0.075646,
+   "recall": 0.961122,
+   "net_saving_inr": -309254926.27179,
+   "fp_friction_inr": 367374462.583756,
+   "fraud_loss_inr": 1650685.227455
+  },
+  {
+   "threshold": 0.007973,
+   "flag_rate": 0.417084,
+   "tp": 3886,
+   "fp": 45375,
+   "fn": 178,
+   "precision": 0.078886,
+   "recall": 0.956201,
+   "net_saving_inr": -291989843.473535,
+   "fp_friction_inr": 349742173.645528,
+   "fraud_loss_inr": 2017891.367428
+  },
+  {
+   "threshold": 0.008653,
+   "flag_rate": 0.396984,
+   "tp": 3870,
+   "fp": 43017,
+   "fn": 194,
+   "precision": 0.082539,
+   "recall": 0.952264,
+   "net_saving_inr": -274557885.683146,
+   "fp_friction_inr": 331959453.026015,
+   "fraud_loss_inr": 2368654.196552
+  },
+  {
+   "threshold": 0.009451,
+   "flag_rate": 0.376884,
+   "tp": 3852,
+   "fp": 40661,
+   "fn": 212,
+   "precision": 0.086537,
+   "recall": 0.947835,
+   "net_saving_inr": -258382799.564289,
+   "fp_friction_inr": 315491179.134411,
+   "fraud_loss_inr": 2661841.969299
+  },
+  {
+   "threshold": 0.010302,
+   "flag_rate": 0.356784,
+   "tp": 3824,
+   "fp": 38315,
+   "fn": 240,
+   "precision": 0.090747,
+   "recall": 0.940945,
+   "net_saving_inr": -240715129.879841,
+   "fp_friction_inr": 297407571.934917,
+   "fraud_loss_inr": 3077779.484344
+  },
+  {
+   "threshold": 0.011253,
+   "flag_rate": 0.336683,
+   "tp": 3791,
+   "fp": 35974,
+   "fn": 273,
+   "precision": 0.095335,
+   "recall": 0.932825,
+   "net_saving_inr": -223895911.833537,
+   "fp_friction_inr": 280040505.141238,
+   "fraud_loss_inr": 3625628.23172
+  },
+  {
+   "threshold": 0.012331,
+   "flag_rate": 0.316583,
+   "tp": 3758,
+   "fp": 33633,
+   "fn": 306,
+   "precision": 0.100505,
+   "recall": 0.924705,
+   "net_saving_inr": -204810422.699327,
+   "fp_friction_inr": 260566855.312177,
+   "fraud_loss_inr": 4013788.926571
+  },
+  {
+   "threshold": 0.013604,
+   "flag_rate": 0.296483,
+   "tp": 3735,
+   "fp": 31282,
+   "fn": 329,
+   "precision": 0.106662,
+   "recall": 0.919045,
+   "net_saving_inr": -186519040.741465,
+   "fp_friction_inr": 241795295.590918,
+   "fraud_loss_inr": 4493966.689968
+  },
+  {
+   "threshold": 0.01508,
+   "flag_rate": 0.276433,
+   "tp": 3699,
+   "fp": 28950,
+   "fn": 365,
+   "precision": 0.113296,
+   "recall": 0.910187,
+   "net_saving_inr": -170006950.411895,
+   "fp_friction_inr": 224635904.69084,
+   "fraud_loss_inr": 5141267.260475
+  },
+  {
+   "threshold": 0.01668,
+   "flag_rate": 0.256282,
+   "tp": 3661,
+   "fp": 26608,
+   "fn": 403,
+   "precision": 0.120949,
+   "recall": 0.900837,
+   "net_saving_inr": -151873940.375532,
+   "fp_friction_inr": 206097551.583254,
+   "fraud_loss_inr": 5546610.331699
+  },
+  {
+   "threshold": 0.017627,
+   "flag_rate": 0.246232,
+   "tp": 3649,
+   "fp": 25433,
+   "fn": 415,
+   "precision": 0.125473,
+   "recall": 0.897884,
+   "net_saving_inr": -143483254.075816,
+   "fp_friction_inr": 197325090.888304,
+   "fraud_loss_inr": 5928384.726933
+  },
+  {
+   "threshold": 0.01813,
+   "flag_rate": 0.24122,
+   "tp": 3639,
+   "fp": 24851,
+   "fn": 425,
+   "precision": 0.127729,
+   "recall": 0.895423,
+   "net_saving_inr": -139247952.063092,
+   "fp_friction_inr": 192890854.002518,
+   "fraud_loss_inr": 6127319.599995
+  },
+  {
+   "threshold": 0.01858,
+   "flag_rate": 0.236182,
+   "tp": 3631,
+   "fp": 24264,
+   "fn": 433,
+   "precision": 0.130167,
+   "recall": 0.893455,
+   "net_saving_inr": -135461574.43576,
+   "fp_friction_inr": 188971024.84756,
+   "fraud_loss_inr": 6260771.127621
+  },
+  {
+   "threshold": 0.019121,
+   "flag_rate": 0.231161,
+   "tp": 3615,
+   "fp": 23687,
+   "fn": 449,
+   "precision": 0.132408,
+   "recall": 0.889518,
+   "net_saving_inr": -131154088.382499,
+   "fp_friction_inr": 184495923.762775,
+   "fraud_loss_inr": 6428386.159145
+  },
+  {
+   "threshold": 0.019661,
+   "flag_rate": 0.226132,
+   "tp": 3608,
+   "fp": 23100,
+   "fn": 456,
+   "precision": 0.135091,
+   "recall": 0.887795,
+   "net_saving_inr": -126758777.07806,
+   "fp_friction_inr": 179991213.659141,
+   "fraud_loss_inr": 6537784.95834
+  },
+  {
+   "threshold": 0.020244,
+   "flag_rate": 0.221111,
+   "tp": 3605,
+   "fp": 22510,
+   "fn": 459,
+   "precision": 0.138043,
+   "recall": 0.887057,
+   "net_saving_inr": -122495758.347572,
+   "fp_friction_inr": 175670503.328922,
+   "fraud_loss_inr": 6595476.558071
+  },
+  {
+   "threshold": 0.020902,
+   "flag_rate": 0.216082,
+   "tp": 3585,
+   "fp": 21936,
+   "fn": 479,
+   "precision": 0.140473,
+   "recall": 0.882136,
+   "net_saving_inr": -118356727.760389,
+   "fp_friction_inr": 171372104.118532,
+   "fraud_loss_inr": 6754845.181278
+  },
+  {
+   "threshold": 0.021589,
+   "flag_rate": 0.211061,
+   "tp": 3562,
+   "fp": 21366,
+   "fn": 502,
+   "precision": 0.142892,
+   "recall": 0.876476,
+   "net_saving_inr": -114657894.514545,
+   "fp_friction_inr": 167026432.110046,
+   "fraud_loss_inr": 7401683.94392
+  },
+  {
+   "threshold": 0.022287,
+   "flag_rate": 0.206032,
+   "tp": 3552,
+   "fp": 20782,
+   "fn": 512,
+   "precision": 0.145969,
+   "recall": 0.874016,
+   "net_saving_inr": -110821413.746757,
+   "fp_friction_inr": 163050880.14246,
+   "fraud_loss_inr": 7540755.143719
+  },
+  {
+   "threshold": 0.022998,
+   "flag_rate": 0.201011,
+   "tp": 3537,
+   "fp": 20204,
+   "fn": 527,
+   "precision": 0.148983,
+   "recall": 0.870325,
+   "net_saving_inr": -106565554.524767,
+   "fp_friction_inr": 158622901.912588,
+   "fraud_loss_inr": 7712874.1516
+  },
+  {
+   "threshold": 0.02376,
+   "flag_rate": 0.195982,
+   "tp": 3524,
+   "fp": 19623,
+   "fn": 540,
+   "precision": 0.152244,
+   "recall": 0.867126,
+   "net_saving_inr": -103250408.487679,
+   "fp_friction_inr": 155112449.123761,
+   "fraud_loss_inr": 7908180.903339
+  },
+  {
+   "threshold": 0.024637,
+   "flag_rate": 0.190961,
+   "tp": 3512,
+   "fp": 19042,
+   "fn": 552,
+   "precision": 0.155715,
+   "recall": 0.864173,
+   "net_saving_inr": -98856534.789137,
+   "fp_friction_inr": 150510886.144552,
+   "fraud_loss_inr": 8115870.184006
+  },
+  {
+   "threshold": 0.025617,
+   "flag_rate": 0.185932,
+   "tp": 3499,
+   "fp": 18461,
+   "fn": 565,
+   "precision": 0.159335,
+   "recall": 0.860974,
+   "net_saving_inr": -94561450.675404,
+   "fp_friction_inr": 145930324.317227,
+   "fraud_loss_inr": 8401347.897598
+  },
+  {
+   "threshold": 0.026576,
+   "flag_rate": 0.180911,
+   "tp": 3485,
+   "fp": 17882,
+   "fn": 579,
+   "precision": 0.163102,
+   "recall": 0.85753,
+   "net_saving_inr": -89889845.0013,
+   "fp_friction_inr": 141053965.844432,
+   "fraud_loss_inr": 8606100.696289
+  },
+  {
+   "threshold": 0.027597,
+   "flag_rate": 0.175881,
+   "tp": 3465,
+   "fp": 17308,
+   "fn": 599,
+   "precision": 0.166803,
+   "recall": 0.852608,
+   "net_saving_inr": -85885673.678272,
+   "fp_friction_inr": 136811236.192611,
+   "fraud_loss_inr": 8844659.025082
+  },
+  {
+   "threshold": 0.02878,
+   "flag_rate": 0.170861,
+   "tp": 3445,
+   "fp": 16735,
+   "fn": 619,
+   "precision": 0.170714,
+   "recall": 0.847687,
+   "net_saving_inr": -81888298.46411,
+   "fp_friction_inr": 132519835.635069,
+   "fraud_loss_inr": 9138684.368462
+  },
+  {
+   "threshold": 0.029927,
+   "flag_rate": 0.165831,
+   "tp": 3431,
+   "fp": 16155,
+   "fn": 633,
+   "precision": 0.175176,
+   "recall": 0.844242,
+   "net_saving_inr": -78069277.22373,
+   "fp_friction_inr": 128426729.561621,
+   "fraud_loss_inr": 9412769.20153
+  },
+  {
+   "threshold": 0.03122,
+   "flag_rate": 0.16081,
+   "tp": 3412,
+   "fp": 15581,
+   "fn": 652,
+   "precision": 0.179645,
+   "recall": 0.839567,
+   "net_saving_inr": -74111421.178469,
+   "fp_friction_inr": 124127726.061343,
+   "fraud_loss_inr": 9753916.656548
+  },
+  {
+   "threshold": 0.03254,
+   "flag_rate": 0.155781,
+   "tp": 3390,
+   "fp": 15009,
+   "fn": 674,
+   "precision": 0.184249,
+   "recall": 0.834154,
+   "net_saving_inr": -70479660.698208,
+   "fp_friction_inr": 120159626.940014,
+   "fraud_loss_inr": 10090255.297615
+  },
+  {
+   "threshold": 0.033905,
+   "flag_rate": 0.15076,
+   "tp": 3367,
+   "fp": 14439,
+   "fn": 697,
+   "precision": 0.189094,
+   "recall": 0.828494,
+   "net_saving_inr": -66630410.67844,
+   "fp_friction_inr": 115831873.447788,
+   "fraud_loss_inr": 10568758.770073
+  },
+  {
+   "threshold": 0.035585,
+   "flag_rate": 0.145731,
+   "tp": 3346,
+   "fp": 13866,
+   "fn": 718,
+   "precision": 0.194399,
+   "recall": 0.823327,
+   "net_saving_inr": -62871733.12034,
+   "fp_friction_inr": 111630527.857157,
+   "fraud_loss_inr": 11011426.802605
+  },
+  {
+   "threshold": 0.0373,
+   "flag_rate": 0.14071,
+   "tp": 3324,
+   "fp": 13295,
+   "fn": 740,
+   "precision": 0.200012,
+   "recall": 0.817913,
+   "net_saving_inr": -58696156.538833,
+   "fp_friction_inr": 107148655.747772,
+   "fraud_loss_inr": 11317722.330482
+  },
+  {
+   "threshold": 0.039192,
+   "flag_rate": 0.135681,
+   "tp": 3301,
+   "fp": 12724,
+   "fn": 763,
+   "precision": 0.205991,
+   "recall": 0.812254,
+   "net_saving_inr": -55036971.115446,
+   "fp_friction_inr": 103016692.221342,
+   "fraud_loss_inr": 11790500.433525
+  },
+  {
+   "threshold": 0.041223,
+   "flag_rate": 0.13066,
+   "tp": 3279,
+   "fp": 12153,
+   "fn": 785,
+   "precision": 0.212481,
+   "recall": 0.806841,
+   "net_saving_inr": -51228210.549875,
+   "fp_friction_inr": 98608871.216852,
+   "fraud_loss_inr": 12389560.872444
+  },
+  {
+   "threshold": 0.043508,
+   "flag_rate": 0.125631,
+   "tp": 3247,
+   "fp": 11591,
+   "fn": 817,
+   "precision": 0.21883,
+   "recall": 0.798967,
+   "net_saving_inr": -47023774.271035,
+   "fp_friction_inr": 93939504.05095,
+   "fraud_loss_inr": 12854491.759506
+  },
+  {
+   "threshold": 0.046123,
+   "flag_rate": 0.12061,
+   "tp": 3222,
+   "fp": 11023,
+   "fn": 842,
+   "precision": 0.226185,
+   "recall": 0.792815,
+   "net_saving_inr": -43206396.258268,
+   "fp_friction_inr": 89619327.97421,
+   "fraud_loss_inr": 13357289.823479
+  },
+  {
+   "threshold": 0.048864,
+   "flag_rate": 0.115581,
+   "tp": 3198,
+   "fp": 10453,
+   "fn": 866,
+   "precision": 0.234269,
+   "recall": 0.786909,
+   "net_saving_inr": -38600807.658154,
+   "fp_friction_inr": 84663602.519482,
+   "fraud_loss_inr": 13707426.678093
+  },
+  {
+   "threshold": 0.051779,
+   "flag_rate": 0.11056,
+   "tp": 3168,
+   "fp": 9890,
+   "fn": 896,
+   "precision": 0.24261,
+   "recall": 0.779528,
+   "net_saving_inr": -34966887.926869,
+   "fp_friction_inr": 80447298.115395,
+   "fraud_loss_inr": 14289811.350895
+  },
+  {
+   "threshold": 0.055455,
+   "flag_rate": 0.105531,
+   "tp": 3135,
+   "fp": 9329,
+   "fn": 929,
+   "precision": 0.251524,
+   "recall": 0.771407,
+   "net_saving_inr": -31545591.502656,
+   "fp_friction_inr": 76544717.282613,
+   "fraud_loss_inr": 14771095.759464
+  },
+  {
+   "threshold": 0.059053,
+   "flag_rate": 0.10051,
+   "tp": 3099,
+   "fp": 8772,
+   "fn": 965,
+   "precision": 0.261056,
+   "recall": 0.762549,
+   "net_saving_inr": -27195049.962524,
+   "fp_friction_inr": 71686614.23833,
+   "fraud_loss_inr": 15278657.263615
+  },
+  {
+   "threshold": 0.063087,
+   "flag_rate": 0.09548,
+   "tp": 3072,
+   "fp": 8205,
+   "fn": 992,
+   "precision": 0.272413,
+   "recall": 0.755906,
+   "net_saving_inr": -23160740.230892,
+   "fp_friction_inr": 67209509.690064,
+   "fraud_loss_inr": 15721452.08025
+  },
+  {
+   "threshold": 0.067707,
+   "flag_rate": 0.09046,
+   "tp": 3035,
+   "fp": 7649,
+   "fn": 1029,
+   "precision": 0.28407,
+   "recall": 0.746801,
+   "net_saving_inr": -19444640.926687,
+   "fp_friction_inr": 62822399.754183,
+   "fraud_loss_inr": 16392462.711926
+  },
+  {
+   "threshold": 0.073167,
+   "flag_rate": 0.08543,
+   "tp": 3000,
+   "fp": 7090,
+   "fn": 1064,
+   "precision": 0.297324,
+   "recall": 0.738189,
+   "net_saving_inr": -15763946.496762,
+   "fp_friction_inr": 58501132.035416,
+   "fraud_loss_inr": 17033036.000767
+  },
+  {
+   "threshold": 0.079286,
+   "flag_rate": 0.080409,
+   "tp": 2959,
+   "fp": 6538,
+   "fn": 1105,
+   "precision": 0.311572,
+   "recall": 0.7281,
+   "net_saving_inr": -12348055.923873,
+   "fp_friction_inr": 54166089.940265,
+   "fraud_loss_inr": 17952187.523029
+  },
+  {
+   "threshold": 0.086299,
+   "flag_rate": 0.07538,
+   "tp": 2908,
+   "fp": 5995,
+   "fn": 1156,
+   "precision": 0.326631,
+   "recall": 0.715551,
+   "net_saving_inr": -8562811.185271,
+   "fp_friction_inr": 49584320.224886,
+   "fraud_loss_inr": 18748712.499805
+  },
+  {
+   "threshold": 0.094483,
+   "flag_rate": 0.070359,
+   "tp": 2868,
+   "fp": 5442,
+   "fn": 1196,
+   "precision": 0.345126,
+   "recall": 0.705709,
+   "net_saving_inr": -4688846.0265,
+   "fp_friction_inr": 44656561.652015,
+   "fraud_loss_inr": 19802505.913906
+  },
+  {
+   "threshold": 0.104333,
+   "flag_rate": 0.06533,
+   "tp": 2815,
+   "fp": 4901,
+   "fn": 1249,
+   "precision": 0.364826,
+   "recall": 0.692667,
+   "net_saving_inr": -1100460.529161,
+   "fp_friction_inr": 40002221.851918,
+   "fraud_loss_inr": 20868460.216663
+  },
+  {
+   "threshold": 0.1153,
+   "flag_rate": 0.060309,
+   "tp": 2763,
+   "fp": 4360,
+   "fn": 1301,
+   "precision": 0.387898,
+   "recall": 0.679872,
+   "net_saving_inr": 2581569.198352,
+   "fp_friction_inr": 35354410.548906,
+   "fraud_loss_inr": 21834241.792164
+  },
+  {
+   "threshold": 0.128782,
+   "flag_rate": 0.05528,
+   "tp": 2687,
+   "fp": 3842,
+   "fn": 1377,
+   "precision": 0.411548,
+   "recall": 0.661171,
+   "net_saving_inr": 5679034.59766,
+   "fp_friction_inr": 30636446.397774,
+   "fraud_loss_inr": 23454740.543987
+  },
+  {
+   "threshold": 0.14575,
+   "flag_rate": 0.050259,
+   "tp": 2615,
+   "fp": 3321,
+   "fn": 1449,
+   "precision": 0.440532,
+   "recall": 0.643455,
+   "net_saving_inr": 8161561.879638,
+   "fp_friction_inr": 26709476.934193,
+   "fraud_loss_inr": 24899182.72559
+  },
+  {
+   "threshold": 0.169686,
+   "flag_rate": 0.04523,
+   "tp": 2522,
+   "fp": 2820,
+   "fn": 1542,
+   "precision": 0.472108,
+   "recall": 0.620571,
+   "net_saving_inr": 11111792.162874,
+   "fp_friction_inr": 22232371.911875,
+   "fraud_loss_inr": 26426057.464672
+  },
+  {
+   "threshold": 0.200713,
+   "flag_rate": 0.040209,
+   "tp": 2430,
+   "fp": 2319,
+   "fn": 1634,
+   "precision": 0.511687,
+   "recall": 0.597933,
+   "net_saving_inr": 12980889.169195,
+   "fp_friction_inr": 18131483.514929,
+   "fraud_loss_inr": 28657848.855297
+  },
+  {
+   "threshold": 0.242388,
+   "flag_rate": 0.03518,
+   "tp": 2316,
+   "fp": 1839,
+   "fn": 1748,
+   "precision": 0.557401,
+   "recall": 0.569882,
+   "net_saving_inr": 14483217.70421,
+   "fp_friction_inr": 14331641.489617,
+   "fraud_loss_inr": 30955362.345594
+  },
+  {
+   "threshold": 0.305788,
+   "flag_rate": 0.030159,
+   "tp": 2212,
+   "fp": 1350,
+   "fn": 1852,
+   "precision": 0.620999,
+   "recall": 0.544291,
+   "net_saving_inr": 17522797.56475,
+   "fp_friction_inr": 9619358.838309,
+   "fraud_loss_inr": 32628065.136362
+  },
+  {
+   "threshold": 0.400045,
+   "flag_rate": 0.02513,
+   "tp": 2056,
+   "fp": 912,
+   "fn": 2008,
+   "precision": 0.692722,
+   "recall": 0.505906,
+   "net_saving_inr": 18476796.547358,
+   "fp_friction_inr": 6004127.048626,
+   "fraud_loss_inr": 35289297.943438
+  },
+  {
+   "threshold": 0.541794,
+   "flag_rate": 0.020109,
+   "tp": 1829,
+   "fp": 546,
+   "fn": 2235,
+   "precision": 0.770105,
+   "recall": 0.450049,
+   "net_saving_inr": 17823229.018044,
+   "fp_friction_inr": 3075760.597303,
+   "fraud_loss_inr": 38871231.924074
+  },
+  {
+   "threshold": 0.712934,
+   "flag_rate": 0.015079,
+   "tp": 1506,
+   "fp": 275,
+   "fn": 2558,
+   "precision": 0.845592,
+   "recall": 0.370571,
+   "net_saving_inr": 15079764.796307,
+   "fp_friction_inr": 1202799.484695,
+   "fraud_loss_inr": 43487657.258419
+  },
+  {
+   "threshold": 0.864378,
+   "flag_rate": 0.010059,
+   "tp": 1072,
+   "fp": 116,
+   "fn": 2992,
+   "precision": 0.902357,
+   "recall": 0.26378,
+   "net_saving_inr": 10099754.960853,
+   "fp_friction_inr": 426841.315198,
+   "fraud_loss_inr": 49243625.263371
+  },
+  {
+   "threshold": 0.962809,
+   "flag_rate": 0.005029,
+   "tp": 552,
+   "fp": 42,
+   "fn": 3512,
+   "precision": 0.929293,
+   "recall": 0.135827,
+   "net_saving_inr": 5021754.657368,
+   "fp_friction_inr": 117895.712627,
+   "fraud_loss_inr": 54630571.169426
+  },
+  {
+   "threshold": 0.999248,
+   "flag_rate": 8e-06,
+   "tp": 1,
+   "fp": 0,
+   "fn": 4063,
+   "precision": 1.0,
+   "recall": 0.000246,
+   "net_saving_inr": 27900.0,
+   "fp_friction_inr": 0.0,
+   "fraud_loss_inr": 59742321.539421
+  }
+ ],
+ "rings": [
+  {
+   "ring_id": 76963,
+   "n_clients": 4,
+   "n_transactions": 5,
+   "n_addresses": 3,
+   "total_amount_inr": 220000.0,
+   "span_days": 0.37292824074074077,
+   "velocity_per_day": 13.40740510846963,
+   "cards_per_address": 1.3333333333333333,
+   "amount_cv": 0.0,
+   "known_prior_frauds": 0,
+   "shared_attributes": {
+    "addr1": [
+     "123.0 (shared by 2 cards)"
+    ],
+    "P_emaildomain": [
+     "outlook.com (shared by 3 cards)"
+    ],
+    "DeviceInfo": [
+     "Z965 Build/NMF26V (shared by 4 cards)"
+    ],
+    "card1": [
+     "15773.0 (shared by 2 cards)",
+     "16075.0 (shared by 2 cards)"
+    ]
+   },
+   "max_fraud_score": 0.9980505540989181,
+   "mean_fraud_score": 0.9818252163146501,
+   "top_features": [
+    "ring_known_fraud_rate",
+    "C14",
+    "C8",
+    "ring_prior_velocity"
+   ],
+   "case_file": {
+    "headline": "4 cards on 1 device processed 5 identical transactions totaling Rs 220,000.00 in 0.37 days",
+    "what_links_them": "All 4 cards share a single device (DeviceInfo: Z965 Build/NMF26V), with 3 cards sharing the outlook.com email domain, 2 cards sharing billing address addr1 123.0, and subsets sharing card1 values (15773.0 and 16075.0).",
+    "why_suspicious": "The ring processed 5 transactions totaling Rs 220,000.00 within 0.37 days across 3 distinct billing addresses using 4 cards on the same device, with zero amount variability (CV 0.000, Rs 44,000.00 per transaction) and high model fraud scores (peak 0.998, mean 0.982).",
+    "innocent_explanation": "An office administrator or family member using a single shared device to make 5 uniform batch purchases or service payments on behalf of multiple individuals with distinct cards and billing addresses.",
+    "recommended_action": "hold",
+    "confidence": "medium",
+    "what_would_change_the_call": "Direct confirmation from the cardholders verifying the Rs 44,000.00 transactions would allow release; any reported chargeback or unverified identity across the 4 cards would justify a block."
+   }
+  },
+  {
+   "ring_id": 63990,
+   "n_clients": 4,
+   "n_transactions": 16,
+   "n_addresses": 1,
+   "total_amount_inr": 169624.40625,
+   "span_days": 38.797731481481485,
+   "velocity_per_day": 0.4123952455219437,
+   "cards_per_address": 4.0,
+   "amount_cv": 0.842831015586853,
+   "known_prior_frauds": 1,
+   "shared_attributes": {
+    "addr1": [
+     "308.0 (shared by 4 cards)"
+    ],
+    "card1": [
+     "1486.0 (shared by 4 cards)"
+    ]
+   },
+   "max_fraud_score": 0.9957414138673184,
+   "mean_fraud_score": 0.06483422707378592,
+   "top_features": [
+    "ring_known_fraud_rate",
+    "C14",
+    "C8",
+    "ring_prior_velocity"
+   ],
+   "case_file": {
+    "headline": "4 cards sharing card1 1486.0 and address 308.0 with 1 confirmed fraud across Rs 169,624.41 in spend",
+    "what_links_them": "All 4 distinct cards share both billing address 308.0 and card identifier card1 1486.0 across 16 transactions.",
+    "why_suspicious": "The ring has 1 confirmed prior fraud, a peak fraud score of 0.996, and moved Rs 169,624.41 across 38.80 days with identical card issuer attributes and billing location.",
+    "innocent_explanation": "A single household or small business at address 308.0 operating 4 legitimate family or employee cards from the same issuing bank (card1 1486.0), where one previous transaction resulted in a disputed charge or mistaken fraud tag.",
+    "recommended_action": "block",
+    "confidence": "high",
+    "what_would_change_the_call": "Evidence that the single confirmed prior fraud was overturned or resolved as friendly fraud, alongside verified KYC for multiple distinct cardholders at address 308.0."
+   }
+  },
+  {
+   "ring_id": 78595,
+   "n_clients": 19,
+   "n_transactions": 73,
+   "n_addresses": 1,
+   "total_amount_inr": 270364.09375,
+   "span_days": 37.39850694444444,
+   "velocity_per_day": 1.9519495820633066,
+   "cards_per_address": 19.0,
+   "amount_cv": 0.6972762942314148,
+   "known_prior_frauds": 12,
+   "shared_attributes": {
+    "P_emaildomain": [
+     "gmail.com (shared by 12 cards)",
+     "hotmail.com (shared by 11 cards)",
+     "anonymous.com (shared by 5 cards)"
+    ],
+    "DeviceInfo": [
+     "Windows (shared by 8 cards)",
+     "SAMSUNG SM-G950F Build/R16NW (shared by 3 cards)",
+     "SM-J710MN Build/NRD90M (shared by 3 cards)"
+    ],
+    "card1": [
+     "3154.0 (shared by 3 cards)",
+     "15885.0 (shared by 2 cards)"
+    ]
+   },
+   "max_fraud_score": 0.9946360299899116,
+   "mean_fraud_score": 0.14082561783149058,
+   "top_features": [
+    "ring_known_fraud_rate",
+    "C14",
+    "C8",
+    "ring_prior_velocity"
+   ],
+   "case_file": {
+    "headline": "19 cards on 1 billing address with 12 confirmed prior frauds across Rs 270,364.09 in spend",
+    "what_links_them": "All 19 cards share a single billing address, with overlaps across device footprints (Windows on 8 cards, specific Samsung Android builds on 6 cards) and email domains.",
+    "why_suspicious": "19 distinct cards concentrated on 1 address over 37.40 days generating 73 transactions, paired with 12 confirmed prior fraud instances and a peak fraud score of 0.995 driven by ring fraud rate.",
+    "innocent_explanation": "A shared corporate office, co-living space, or procurement department where multiple employees or residents use their personal/corporate cards under a single centralized billing address.",
+    "recommended_action": "block",
+    "confidence": "high",
+    "what_would_change_the_call": "Proof of legitimate corporate procurement at this specific billing address and confirmation that the 12 prior fraud records were misclassified or resolved chargebacks."
+   }
+  },
+  {
+   "ring_id": 141179,
+   "n_clients": 3,
+   "n_transactions": 5,
+   "n_addresses": 1,
+   "total_amount_inr": 21581.384765625,
+   "span_days": 14.045532407407407,
+   "velocity_per_day": 0.35598508158815495,
+   "cards_per_address": 3.0,
+   "amount_cv": 0.4698775112628937,
+   "known_prior_frauds": 7,
+   "shared_attributes": {},
+   "max_fraud_score": 0.9935447126483599,
+   "mean_fraud_score": 0.3998341169348292,
+   "top_features": [
+    "ring_known_fraud_rate",
+    "C14",
+    "C8",
+    "ring_prior_velocity"
+   ],
+   "case_file": {
+    "headline": "3 cards across 1 billing address totaling Rs 21,581.38 over 14.05 days with 7 confirmed prior frauds",
+    "what_links_them": "The 3 distinct cards share a single billing address across 5 transactions, with no other shared attributes recorded.",
+    "why_suspicious": "The ring contains 7 confirmed prior frauds and generated a peak fraud score of 0.994 driven by ring_known_fraud_rate and prior velocity, with 3 cards operating through 1 common address across Rs 21,581.38 in transactions.",
+    "innocent_explanation": "A single household, family, or shared residence using 3 separate cards to make 5 routine purchases across 14.05 days at an unhurried velocity of 0.36 transactions per day.",
+    "recommended_action": "block",
+    "confidence": "high",
+    "what_would_change_the_call": "Proof that the 7 prior fraud marks were logged in error or overturned chargebacks, combined with verified identity documents establishing legitimate separate cardholders living at the shared address."
+   }
+  },
+  {
+   "ring_id": 113692,
+   "n_clients": 19,
+   "n_transactions": 77,
+   "n_addresses": 3,
+   "total_amount_inr": 340406.28125,
+   "span_days": 30.650636574074074,
+   "velocity_per_day": 2.5121827344078937,
+   "cards_per_address": 6.333333333333333,
+   "amount_cv": 1.4786667823791504,
+   "known_prior_frauds": 6,
+   "shared_attributes": {
+    "P_emaildomain": [
+     "gmail.com (shared by 10 cards)",
+     "hotmail.com (shared by 8 cards)",
+     "outlook.com (shared by 3 cards)"
+    ],
+    "DeviceInfo": [
+     "SM-G955F Build/R16NW (shared by 4 cards)",
+     "Windows (shared by 4 cards)",
+     "ZTE BLADE V8 MINI Build/NRD90M (shared by 3 cards)"
+    ],
+    "card1": [
+     "3154.0 (shared by 3 cards)",
+     "13832.0 (shared by 3 cards)",
+     "15885.0 (shared by 3 cards)"
+    ]
+   },
+   "max_fraud_score": 0.9935142532609036,
+   "mean_fraud_score": 0.08543799592139863,
+   "top_features": [
+    "ring_known_fraud_rate",
+    "C14",
+    "C8",
+    "ring_prior_velocity"
+   ],
+   "case_file": {
+    "headline": "19 cards across 3 billing addresses with 6 confirmed prior frauds totaling Rs 340,406.28",
+    "what_links_them": "19 cards are concentrated across only 3 billing addresses (6.33 cards per address) and linked via shared devices, including Samsung SM-G955F (4 cards), Windows (4 cards), and ZTE BLADE V8 MINI (3 cards), as well as shared card prefix groupings.",
+    "why_suspicious": "The ring has 6 confirmed prior fraud records, a peak model fraud score of 0.994 driven by prior velocity and known fraud rate, and concentrated velocity of 77 transactions (2.51 per day) spanning Rs 340,406.28 across tightly shared mobile hardware.",
+    "innocent_explanation": "A multi-family residence, shared student accommodation, or small office using 3 billing addresses where members legitimately share household phones and computers to make varied personal purchases.",
+    "recommended_action": "block",
+    "confidence": "high",
+    "what_would_change_the_call": "Evidence that the 6 confirmed prior fraud cases were misclassified or successfully resolved chargeback disputes, coupled with KYC verification linking the separate cardholders to the 3 addresses."
+   }
+  }
+ ]
+}
