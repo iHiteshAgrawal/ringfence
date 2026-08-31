@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
@@ -85,6 +86,13 @@ def main() -> int:
     ap.add_argument("--tag", default="main")
     ap.add_argument("--rings", type=int, default=5)
     ap.add_argument("--with-casefiles", action="store_true")
+    ap.add_argument(
+        "--mirror", type=str, default=None,
+        help="Also copy index.html and data.json to this directory "
+             "(e.g. a portfolio repo). Both files must travel together: the "
+             "page fetches data.json relative to itself, so copying only the "
+             "HTML yields an empty report.",
+    )
     args = ap.parse_args()
 
     main_res = load_json(f"results_{args.tag}.json")
@@ -140,6 +148,17 @@ def main() -> int:
     out = DOCS / "data.json"
     out.write_text(json.dumps(payload, indent=1))
     console.log(f"wrote {out} ({out.stat().st_size/1024:.0f} KB)")
+
+    if args.mirror:
+        dest = Path(args.mirror).expanduser()
+        dest.mkdir(parents=True, exist_ok=True)
+        for name in ("index.html", "data.json"):
+            src = DOCS / name
+            if not src.exists():
+                console.log(f"[yellow]skipped {name}: not in docs/[/yellow]")
+                continue
+            shutil.copy2(src, dest / name)
+            console.log(f"mirrored {name} -> {dest / name}")
     return 0
 
 

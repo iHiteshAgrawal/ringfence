@@ -61,8 +61,12 @@ GENUINE_FRAUD_SCORE_MIN = 0.70
 #     p = base + (ceiling - base) * lift / (lift + K)
 #
 #: No-evidence floor and best-case ceiling when the pattern looks like friendly
-#: fraud. Reported representment win rates in CNP retail cluster in the 20-40%
-#: band, with well-documented cases reaching roughly 60%.
+#: fraud. Anchored on published industry figures rather than intuition:
+#: merchants win about 44.6% of the chargebacks they contest, while NET recovery
+#: after second-cycle disputes is only about 10.7% (Chargebacks911, 2026). The
+#: ceiling sits a little above the gross win rate because these cases are
+#: pre-selected -- we only reach it with strong evidence on a friendly-fraud
+#: pattern, which is the favourable end of that distribution.
 BASE_P_WIN_FRIENDLY = 0.10
 CEILING_P_WIN_FRIENDLY = 0.62
 #: Against a genuinely compromised card the issuer holds a cardholder
@@ -92,6 +96,9 @@ STRENGTH_FACTOR = {"strong": 1.0, "moderate": 0.6, "weak": 0.25}
 CONTEST_EFFORT_COST_INR = 400.0
 #: Some networks levy a fee when a representment is filed and lost.
 LOST_REPRESENTMENT_FEE_INR = 250.0
+#: Note on interpretation: the gap between a 44.6% gross win rate and a 10.7%
+#: net recovery is the whole argument for triage. Contesting everything is what
+#: produces that gap; choosing which cases to fight is what closes it.
 
 #: Below this many days remaining, hand to a human rather than auto-drafting.
 URGENT_DAYS = 2

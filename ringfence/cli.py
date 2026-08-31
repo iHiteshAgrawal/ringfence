@@ -117,11 +117,20 @@ def site(
     with_casefiles: bool = typer.Option(
         False, help="Regenerate ring case files (costs an API call each)."
     ),
+    mirror: str = typer.Option(
+        None, help="Also copy the page to another directory, e.g. a portfolio repo."
+    ),
 ) -> None:
-    """Rebuild docs/data.json for the GitHub Pages report from reports/."""
+    """Rebuild docs/data.json for the GitHub Pages report from reports/.
+
+    Pass --mirror to publish the same page elsewhere. index.html and data.json
+    must always travel together; the page fetches the JSON relative to itself.
+    """
     args = ["--rings", str(rings)]
     if with_casefiles:
         args.append("--with-casefiles")
+    if mirror:
+        args += ["--mirror", mirror]
     _run("build_site.py", *args)
 
 

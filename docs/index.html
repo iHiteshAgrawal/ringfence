@@ -86,13 +86,17 @@ h1 {
   font-family: var(--serif); font-size: clamp(1.05rem, 2.2vw, 1.2rem);
   color: var(--text-secondary); margin: 0 0 1.75rem; max-width: 38rem;
 }
+/* Each dt/dd pair is wrapped in a div so the PAIR is the grid item. Putting
+   display:grid directly on the dl makes every dt and every dd its own item,
+   and a label then flows into a different row from its value. */
 .meta {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: .85rem 1.5rem; font-family: var(--mono); font-size: .74rem;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: .9rem 1.5rem; font-family: var(--mono); font-size: .74rem;
   border-top: 1px solid var(--rule); padding-top: 1.1rem;
 }
-.meta dt { color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .15rem; }
-.meta dd { margin: 0; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.meta > div { min-width: 0; }
+.meta dt { color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .2rem; }
+.meta dd { margin: 0; color: var(--text-primary); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .meta a { color: var(--series-1); }
 
 /* ---- sections ---- */
@@ -110,6 +114,37 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 code { font-family: var(--mono); font-size: .87em; background: var(--surface-2); padding: .1em .35em; border-radius: 2px; }
 .lede { font-size: 1.05rem; color: var(--text-secondary); }
+
+/* Intro prose beside a vertical figure panel. Single column below 900px, where
+   a 20rem sidebar would squeeze the measure below readability. */
+.split { display: grid; gap: 2rem 2.5rem; align-items: start; }
+@media (min-width: 900px) { .split { grid-template-columns: minmax(0,1fr) 19rem; } }
+
+.context { border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.context h3 {
+  margin: 0; padding: .7rem 1rem; background: var(--surface-2);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--text-muted); font-weight: 500;
+}
+.stat { padding: .95rem 1rem; border-bottom: 1px solid var(--rule); }
+.stat:last-child { border-bottom: 0; }
+.stat b {
+  font-family: var(--mono); font-size: 1.5rem; font-weight: 500; line-height: 1.1;
+  font-variant-numeric: tabular-nums; display: block; margin-bottom: .25rem;
+  letter-spacing: -.02em; color: var(--series-1);
+}
+.stat .what { display: block; font-size: .84rem; line-height: 1.45; color: var(--text-primary); }
+.stat .src { display: block; font-family: var(--mono); font-size: .66rem;
+  color: var(--text-muted); margin-top: .4rem; }
+.stat .src a { color: var(--text-muted); }
+/* $1 against $5.13, drawn to scale. Bars are labelled, so the comparison does
+   not rest on length alone. */
+.mult { margin: .6rem 0 .2rem; display: grid; gap: 4px; font-family: var(--mono); font-size: .66rem; }
+.mult div { display: grid; grid-template-columns: 2.6rem 1fr; align-items: center; gap: .5rem; }
+.mult span { color: var(--text-muted); text-align: right; }
+.mult i { display: block; height: 10px; border-radius: 2px; background: var(--series-1); }
+.mult .full i { opacity: .3; }
 
 /* ---- figures & tables ---- */
 figure { margin: 2rem 0; }
@@ -193,8 +228,11 @@ svg { display: block; max-width: 100%; height: auto; }
   text-transform: uppercase; color: var(--text-muted); margin-bottom: .5rem; }
 .note p:last-child { margin-bottom: 0; }
 
-footer { border-top: 1px solid var(--rule); margin-top: 4rem; padding-top: 1.5rem;
+footer { border-top: 2px solid var(--text-primary); margin-top: 4rem; padding-top: 1.5rem;
   font-size: .82rem; color: var(--text-muted); }
+.byline { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; align-items: baseline; margin-bottom: 1rem; }
+.byline .who { font-family: var(--serif); font-size: 1.05rem; color: var(--text-primary); font-weight: 500; }
+.byline a { font-family: var(--mono); font-size: .76rem; }
 pre { background: var(--surface-2); border: 1px solid var(--rule); border-radius: 3px;
   padding: .9rem 1rem; overflow-x: auto; font-family: var(--mono); font-size: .78rem; line-height: 1.7; }
 ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
@@ -214,16 +252,138 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 </header>
 
 <section id="abstract">
-  <div class="col">
-    <p class="lede">A merchant does not lose money to fraudsters one at a time. They lose it to
-    <em>rings</em> — one operator running many cards through a handful of shared addresses, devices and
-    email domains. Scored individually each transaction is unremarkable; scored as a group the operator
-    is obvious.</p>
-    <p>This page reports held-out performance for a ring-aware detector on the IEEE-CIS card-not-present
-    dataset, whose ground truth is reported chargebacks. Every figure is generated from the artefacts in
-    <code>reports/</code> by <code>scripts/build_site.py</code>, so this page cannot drift from the
-    experiment that produced it.</p>
+  <div class="split">
+    <div>
+      <p class="lede">A merchant does not lose money to fraudsters one at a time. They lose it to
+      <em>rings</em> — one operator running many cards through a handful of shared addresses, devices and
+      email domains. Scored individually each transaction is unremarkable; scored as a group the operator
+      is obvious.</p>
+      <p>Card fraud is not a rounding error and it is not shrinking. What makes it worse than the sticker
+      price is that a reversed payment costs a merchant several times the disputed amount: the goods are
+      gone, the money is clawed back, a penalty is levied, and staff time is spent contesting it.</p>
+      <p>What follows is the measured case: §1 reports held-out detection performance against an
+      ablation with the ring layer removed; §2 turns the score into an operating point priced in rupees;
+      §3 breaks each of the project's honesty guarantees in turn to show what they cost; §4 shows the
+      review queue an analyst would actually work. §5 describes the dispute side, which is
+      parameterised rather than measured, and says so.</p>
+      <p>This page reports held-out performance for a ring-aware detector on the IEEE-CIS card-not-present
+      dataset, whose ground truth is reported chargebacks. Every figure is generated from the artefacts in
+      <code>reports/</code> by <code>scripts/build_site.py</code>, so this page cannot drift from the
+      experiment that produced it.</p>
+    </div>
+
+    <aside class="context">
+      <h3>Why this matters — external data</h3>
+
+      <div class="stat">
+        <b>$33.4 bn</b>
+        <span class="what">Card fraud losses worldwide in 2024, with $403.88 bn projected cumulatively
+        over ten years.</span>
+        <span class="src"><a href="https://nilsonreport.com/articles/card-fraud-losses-worldwide-2024/">Nilson
+        Report, 2026</a></span>
+      </div>
+
+      <div class="stat">
+        <b>$5.13</b>
+        <div class="mult" aria-hidden="true">
+          <div><span>lost</span><i style="width:19.5%"></i></div>
+          <div class="full"><span>costs</span><i style="width:100%"></i></div>
+        </div>
+        <span class="what">True cost to a US merchant for every <strong>$1</strong> lost to fraud — up
+        52.6% since 2020. This is why the model here is scored in money, not in AUC.</span>
+        <span class="src">LexisNexis Risk Solutions, 2025</span>
+      </div>
+
+      <div class="stat">
+        <b>337 million</b>
+        <span class="what">Chargebacks worldwide in 2026, up 41% from 238 million in 2023.</span>
+        <span class="src">Mastercard, via Chargebacks911</span>
+      </div>
+
+      <div class="stat">
+        <b>40–80%</b>
+        <span class="what">Share of e-commerce fraud losses attributed to <em>friendly fraud</em> — a real
+        customer disputing a purchase they made. The dispute agent in §5 turns on separating this from
+        genuine theft.</span>
+        <span class="src">Chargebacks911, 2026</span>
+      </div>
+
+      <div class="stat">
+        <b>44.6% / 10.7%</b>
+        <span class="what">Merchants win 44.6% of the chargebacks they contest, but net recovery after
+        second-cycle disputes is only 10.7% — so deciding <em>which</em> to fight matters more than
+        fighting harder.</span>
+        <span class="src">Chargebacks911, 2026</span>
+      </div>
+    </aside>
   </div>
+
+  <figure>
+    <svg viewBox="0 0 860 310" role="img" aria-label="Ordinary customers each transact from their own address over weeks. Ring 76963 runs four different cards through one shared device, making five transactions of exactly 44,000 rupees within nine hours.">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <polygon points="0,1 9,5 0,9" style="fill:var(--axis)"/>
+        </marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <polygon points="0,1 9,5 0,9" style="fill:var(--invalid)"/>
+        </marker>
+      </defs>
+
+      <!-- ORDINARY -->
+      <text x="0" y="12" class="axlabel">ordinary traffic</text>
+      <line x1="0" y1="22" x2="330" y2="22" style="stroke:var(--rule)" stroke-width="1"/>
+      <g class="tick">
+        <rect x="0" y="52" width="86" height="30" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="43" y="71" text-anchor="middle" style="fill:var(--text-secondary)">card P</text>
+        <rect x="0" y="112" width="86" height="30" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="43" y="131" text-anchor="middle" style="fill:var(--text-secondary)">card Q</text>
+        <rect x="0" y="172" width="86" height="30" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="43" y="191" text-anchor="middle" style="fill:var(--text-secondary)">card R</text>
+
+        <line x1="92" y1="67"  x2="158" y2="67"  style="stroke:var(--axis)" marker-end="url(#ah)"/>
+        <line x1="92" y1="127" x2="158" y2="127" style="stroke:var(--axis)" marker-end="url(#ah)"/>
+        <line x1="92" y1="187" x2="158" y2="187" style="stroke:var(--axis)" marker-end="url(#ah)"/>
+
+        <text x="166" y="71"  style="fill:var(--text-secondary)">own device</text>
+        <text x="166" y="131" style="fill:var(--text-secondary)">own device</text>
+        <text x="166" y="191" style="fill:var(--text-secondary)">own device</text>
+      </g>
+      <text x="0" y="238" class="tick" style="fill:var(--text-muted)">One card each, weeks apart.</text>
+      <text x="0" y="256" class="tick" style="fill:var(--text-muted)">Nothing links them.</text>
+
+      <line x1="365" y1="8" x2="365" y2="270" style="stroke:var(--rule)" stroke-width="1" stroke-dasharray="3 5"/>
+
+      <!-- RING -->
+      <text x="400" y="12" class="axlabel" style="fill:var(--invalid)">ring 76963 — observed</text>
+      <line x1="400" y1="22" x2="860" y2="22" style="stroke:var(--invalid)" stroke-width="1" opacity="0.45"/>
+      <g class="tick">
+        <rect x="400" y="40" width="86" height="26" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="443" y="57" text-anchor="middle" style="fill:var(--invalid)">card A</text>
+        <rect x="400" y="86" width="86" height="26" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="443" y="103" text-anchor="middle" style="fill:var(--invalid)">card B</text>
+        <rect x="400" y="132" width="86" height="26" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="443" y="149" text-anchor="middle" style="fill:var(--invalid)">card C</text>
+        <rect x="400" y="178" width="86" height="26" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="443" y="195" text-anchor="middle" style="fill:var(--invalid)">card D</text>
+
+        <path d="M492 53  L530 53  L530 110" fill="none" style="stroke:var(--invalid)" opacity="0.8"/>
+        <path d="M492 99  L530 99"          fill="none" style="stroke:var(--invalid)" opacity="0.8"/>
+        <path d="M492 145 L530 145"         fill="none" style="stroke:var(--invalid)" opacity="0.8"/>
+        <path d="M492 191 L530 191 L530 134" fill="none" style="stroke:var(--invalid)" opacity="0.8"/>
+        <line x1="530" y1="122" x2="566" y2="122" style="stroke:var(--invalid)" marker-end="url(#ahr)"/>
+
+        <rect x="572" y="104" width="176" height="36" rx="3" style="fill:var(--surface-2);stroke:var(--invalid)"/>
+        <text x="660" y="127" text-anchor="middle" style="fill:var(--invalid)">Z965 Build/NMF26V</text>
+        <text x="660" y="158" text-anchor="middle" style="fill:var(--text-muted)">one shared device</text>
+      </g>
+      <text x="400" y="238" class="tick" style="fill:var(--invalid)">5 transactions of exactly ₹44,000 — amount variability 0.000</text>
+      <text x="400" y="256" class="tick" style="fill:var(--invalid)">4 cards, 0.37 days, ₹220,000 total</text>
+    </svg>
+    <figcaption><b>Figure 1</b> The detection premise, drawn from an actual ring in the held-out
+    period. Individually each transaction on the right is unremarkable: a plausible amount, a valid
+    card, a real address. Only the shape gives the operator away — and once one member is flagged, the
+    other three are known before they cost anything.</figcaption>
+  </figure>
 </section>
 
 <section id="results">
@@ -263,7 +423,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
   <figure>
     <div class="legend"><span><i class="swatch" style="background:var(--series-1)"></i>Net saving</span></div>
     <div id="fig1a"></div>
-    <figcaption><b>Figure 1a</b> Net saving against the share of traffic flagged for review, in rupees,
+    <figcaption><b>Figure 2a</b> Net saving against the share of traffic flagged for review, in rupees,
     relative to a no-model baseline of approving everything. The vertical axis is clipped; the curve
     continues to <span class="num" id="worst-loss"></span> when every transaction is flagged. Log
     horizontal axis.</figcaption>
@@ -275,11 +435,11 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <span><i class="swatch" style="background:var(--series-2)"></i>Recall</span>
     </div>
     <div id="fig1b"></div>
-    <figcaption><b>Figure 1b</b> Precision and recall against the same horizontal axis. Both are unitless
+    <figcaption><b>Figure 2b</b> Precision and recall against the same horizontal axis. Both are unitless
     proportions, so they share one scale.</figcaption>
   </figure>
 
-  <p><button class="linkish" id="toggle-table" aria-expanded="false">Show Figure 1 as a table</button></p>
+  <p><button class="linkish" id="toggle-table" aria-expanded="false">Show Figure 2 as a table</button></p>
   <div class="scroll" id="curve-table" hidden></div>
 </section>
 
@@ -306,7 +466,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <span><i class="swatch" style="background:var(--invalid)"></i>Invalid — assumption cannot hold</span>
     </div>
     <div id="fig2"></div>
-    <figcaption><b>Figure 2</b> PR-AUC and net saving under each variant, as separate panels because the
+    <figcaption><b>Figure 3</b> PR-AUC and net saving under each variant, as separate panels because the
     two quantities share no scale. Either shortcut lifts PR-AUC from 0.60 to roughly 0.96 and nearly
     triples the reported saving.</figcaption>
   </figure>
@@ -334,15 +494,49 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
   <div id="case-panel"></div>
 </section>
 
+
+<section id="dispute">
+  <h2><span class="sn">5</span> Disputes that land anyway</h2>
+  <div class="col">
+    <p>Detection is never perfect. When a chargeback does arrive, a merchant can contest it — and
+    published figures put the gross win rate at 44.6% but net recovery at 10.7%. That gap is the whole
+    argument for triage: contesting everything is what produces it.</p>
+    <p>There is no public dataset of dispute <em>outcomes</em>, so rather than train a win model on
+    invented labels, the detector is <strong>inverted</strong>. Conditioned on a chargeback having been
+    filed:</p>
+  </div>
+  <p class="tcap"><b>Table 3</b> How the fraud score is read once a dispute exists.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Fraud score</th><th>Reading</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>High</td><td style="text-align:left">The card really was stolen; the cardholder is a
+        victim telling the truth</td><td style="text-align:left">Accept — unwinnable, and fighting a
+        real victim is wrong</td></tr>
+      <tr><td>Low</td><td style="text-align:left">The transaction looked legitimate on every signal yet
+        is disputed — the friendly-fraud signature</td><td style="text-align:left">Contest</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>So a model validated on real labels does the work, and the ethical constraint falls out of the
+    same signal. Where the decision is to contest, an agent drafts the Razorpay evidence payload; every
+    document id is checked against the merchant's actual inventory <em>in code</em>, because a
+    hallucinated id is not a formatting bug but a fabricated evidence claim sent to a bank. The payload
+    is hard-wired to <code>draft</code>.</p>
+    <p><strong>This section carries no measured results, and should not be read as if it did.</strong>
+    The triage economics are parameterised from the published figures above; the evidence documents used
+    in testing are illustrative, since IEEE-CIS contains no merchant document store.</p>
+  </div>
+</section>
+
 <section id="limits">
-  <h2><span class="sn">5</span> Limitations</h2>
+  <h2><span class="sn">6</span> Limitations</h2>
   <div class="col">
     <ul id="limits-list"></ul>
   </div>
 </section>
 
 <section id="repro">
-  <h2><span class="sn">6</span> Reproduction</h2>
+  <h2><span class="sn">7</span> Reproduction</h2>
   <div class="col">
     <p>Every number on this page is regenerated by the commands below. The page reads
     <code>docs/data.json</code>, which <code>build_site.py</code> writes from <code>reports/</code>.</p>
@@ -357,6 +551,11 @@ python scripts/build_site.py --with-casefiles</pre>
 </section>
 
 <footer class="col">
+  <p class="byline">
+    <span class="who">Hitesh Kumar Gupta</span>
+    <a href="https://hiteshkrgupta.github.io/">hiteshkrgupta.github.io</a>
+    <a href="mailto:hiteshagarwal172@gmail.com">hiteshagarwal172@gmail.com</a>
+  </p>
   <p id="foot"></p>
 </footer>
 </div>
@@ -593,8 +792,8 @@ function render() {
     ["Built", d.generated_at]
   ];
   rows.forEach(([k, v]) => {
-    meta.append(el("dt", {}, k));
-    const dd = el("dd"); dd.innerHTML = v; meta.append(dd);
+    const dd = el("dd"); dd.innerHTML = v;
+    meta.append(el("div", {}, [el("dt", {}, k), dd]));
   });
 
   // Table 1
@@ -675,7 +874,7 @@ function render() {
   tt.addEventListener("click", () => {
     const open = ct.hidden;
     ct.hidden = !open; tt.setAttribute("aria-expanded", String(open));
-    tt.textContent = open ? "Hide the table" : "Show Figure 1 as a table";
+    tt.textContent = open ? "Hide the table" : "Show Figure 2 as a table";
   });
 
   // Ablation
