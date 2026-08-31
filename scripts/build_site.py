@@ -88,12 +88,17 @@ def main() -> int:
     ap.add_argument("--with-casefiles", action="store_true")
     ap.add_argument(
         "--mirror", type=str, default=None,
-        help="Also copy index.html and data.json to this directory "
-             "(e.g. a portfolio repo). Both files must travel together: the "
-             "page fetches data.json relative to itself, so copying only the "
-             "HTML yields an empty report.",
+        help="Also copy the built page to this directory (e.g. a portfolio "
+             "repo). All assets travel together -- index.html, data.json and "
+             "architecture.svg are fetched relative to the page, so copying "
+             "only the HTML yields a broken report.",
     )
     args = ap.parse_args()
+
+    # Regenerate the architecture diagram so it cannot fall out of step.
+    subprocess.run([sys.executable, str(Path(__file__).parent / "make_architecture.py")],
+                   check=True, capture_output=True)
+    console.log("regenerated architecture.svg")
 
     main_res = load_json(f"results_{args.tag}.json")
     if main_res is None:
@@ -152,7 +157,9 @@ def main() -> int:
     if args.mirror:
         dest = Path(args.mirror).expanduser()
         dest.mkdir(parents=True, exist_ok=True)
-        for name in ("index.html", "data.json"):
+        # Every asset the page needs at runtime. Missing one leaves a live
+        # site half-broken, so this list must track what index.html fetches.
+        for name in ("index.html", "data.json", "architecture.svg"):
             src = DOCS / name
             if not src.exists():
                 console.log(f"[yellow]skipped {name}: not in docs/[/yellow]")

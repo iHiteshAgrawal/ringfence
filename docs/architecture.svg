@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 790" role="img"
+  aria-label="Ringfence architecture. An offline training plane and an online per-transaction scoring plane share one entity graph and one model artifact, and run the same feature module. Scoring ends at a cost-optimal threshold that either allows a transaction or sends it to a review queue worked by an analyst. Separately, an issuer filing a chargeback triggers dispute triage, which drafts a payload a human must approve. Confirmed chargebacks feed back into the ring fraud history after a thirty-day reporting lag.">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0,1 9,5 0,9" fill="context-stroke"/>
+    </marker>
+  </defs>
+  <g font-family="IBM Plex Mono, ui-monospace, monospace">
+        <rect x="8" y="24" width="1104" height="176" rx="6" fill="none" style="stroke:var(--rule)" stroke-dasharray="2 4"/>
+    <text x="20" y="42" font-size="10" letter-spacing="1.2" style="fill:var(--text-muted)">OFFLINE  ·  RUNS ON A SCHEDULE OVER HISTORY</text>
+    <rect x="8" y="210" width="1104" height="116" rx="6" fill="none" style="stroke:var(--rule)" stroke-dasharray="2 4"/>
+    <text x="20" y="228" font-size="10" letter-spacing="1.2" style="fill:var(--text-muted)">SHARED STATE  ·  WRITTEN ONLINE, READ BY BOTH</text>
+    <rect x="8" y="336" width="1104" height="176" rx="6" fill="none" style="stroke:var(--rule)" stroke-dasharray="2 4"/>
+    <text x="20" y="354" font-size="10" letter-spacing="1.2" style="fill:var(--text-muted)">ONLINE  ·  PER TRANSACTION</text>
+    <rect x="8" y="522" width="1104" height="244" rx="6" fill="none" style="stroke:var(--rule)" stroke-dasharray="2 4"/>
+    <text x="20" y="540" font-size="10" letter-spacing="1.2" style="fill:var(--text-muted)">HUMAN  &amp;  EXTERNAL PARTIES</text>
+    <rect x="24" y="62" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="36" y="83" font-size="12" style="fill:var(--text-primary)">historical txns</text>
+    <text x="36" y="99" font-size="9.5" style="fill:var(--text-secondary)">IEEE-CIS, labelled</text>
+    <text x="36" y="114" font-size="9.5" style="fill:var(--series-1)">590,540</text>
+    <rect x="196" y="62" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="208" y="83" font-size="12" style="fill:var(--text-primary)">entity resolution</text>
+    <text x="208" y="99" font-size="9.5" style="fill:var(--text-secondary)">fingerprint + D1 anchor</text>
+    <text x="208" y="114" font-size="9.5" style="fill:var(--series-1)">222,477 clients</text>
+    <rect x="376" y="62" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="388" y="83" font-size="12" style="fill:var(--text-primary)">feature build</text>
+    <text x="388" y="99" font-size="9.5" style="fill:var(--text-secondary)">causal, 30-day label lag</text>
+    <text x="388" y="114" font-size="9.5" style="fill:var(--series-1)">shared module</text>
+    <rect x="564" y="62" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="576" y="83" font-size="12" style="fill:var(--text-primary)">temporal split</text>
+    <text x="576" y="99" font-size="9.5" style="fill:var(--text-secondary)">+7-day embargo</text>
+    <text x="576" y="114" font-size="9.5" style="fill:var(--series-1)">453,779 / 118,108</text>
+    <rect x="736" y="62" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="748" y="83" font-size="12" style="fill:var(--text-primary)">LightGBM + Platt</text>
+    <text x="748" y="99" font-size="9.5" style="fill:var(--text-secondary)">time-aware validation</text>
+    <text x="748" y="114" font-size="9.5" style="fill:var(--series-1)">PR-AUC 0.5986</text>
+    <rect x="916" y="62" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="928" y="83" font-size="12" style="fill:var(--text-primary)">cost curve</text>
+    <text x="928" y="99" font-size="9.5" style="fill:var(--text-secondary)">both errors priced</text>
+    <text x="928" y="114" font-size="9.5" style="fill:var(--series-1)">threshold 0.400</text>
+    <polyline points="172,96 196,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="352,96 376,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="540,96 564,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="712,96 736,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="892,96 916,96" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <path d="M196 253 a 120.0 9 0 0 1 240 0 v 54 a 120.0 9 0 0 1 -240 0 z" style="fill:var(--surface-2);stroke:var(--series-1)"/>
+    <path d="M196 253 a 120.0 9 0 0 0 240 0" fill="none" style="stroke:var(--series-1)" opacity="0.7"/>
+    <text x="316.0" y="278" font-size="11.5" text-anchor="middle" style="fill:var(--text-primary)">entity graph</text>
+    <text x="316.0" y="293" font-size="9" text-anchor="middle" style="fill:var(--text-secondary)">clients · rings · fraud history</text>
+    <path d="M564 253 a 100.0 9 0 0 1 200 0 v 54 a 100.0 9 0 0 1 -200 0 z" style="fill:var(--surface-2);stroke:var(--series-1)"/>
+    <path d="M564 253 a 100.0 9 0 0 0 200 0" fill="none" style="stroke:var(--series-1)" opacity="0.7"/>
+    <text x="664.0" y="278" font-size="11.5" text-anchor="middle" style="fill:var(--text-primary)">model artifact</text>
+    <text x="664.0" y="293" font-size="9" text-anchor="middle" style="fill:var(--text-secondary)">booster + calibrator</text>
+    <path d="M880 253 a 100.0 9 0 0 1 200 0 v 54 a 100.0 9 0 0 1 -200 0 z" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <path d="M880 253 a 100.0 9 0 0 0 200 0" fill="none" style="stroke:var(--rule)" opacity="0.7"/>
+    <text x="980.0" y="278" font-size="11.5" text-anchor="middle" style="fill:var(--text-primary)">evidence store</text>
+    <text x="980.0" y="293" font-size="9" text-anchor="middle" style="fill:var(--text-secondary)">merchant's own documents</text>
+    <rect x="24" y="374" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="36" y="395" font-size="12" style="fill:var(--text-primary)">new transaction</text>
+    <text x="36" y="411" font-size="9.5" style="fill:var(--text-secondary)">arrives at the gateway</text>
+    <rect x="196" y="374" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="208" y="395" font-size="12" style="fill:var(--text-primary)">resolve + link</text>
+    <text x="208" y="411" font-size="9.5" style="fill:var(--text-secondary)">union-find, at arrival</text>
+    <text x="208" y="426" font-size="9.5" style="fill:var(--series-1)">same module</text>
+    <rect x="376" y="374" width="164" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="388" y="395" font-size="12" style="fill:var(--text-primary)">feature build</text>
+    <text x="388" y="411" font-size="9.5" style="fill:var(--text-secondary)">prior transactions only</text>
+    <text x="388" y="426" font-size="9.5" style="fill:var(--series-1)">same module</text>
+    <rect x="564" y="374" width="148" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="576" y="395" font-size="12" style="fill:var(--text-primary)">score</text>
+    <text x="576" y="411" font-size="9.5" style="fill:var(--text-secondary)">calibrated probability</text>
+    <path d="M800 366 L876 408 L800 450 L724 408 z" style="fill:var(--surface-2);stroke:var(--series-1)"/>
+    <text x="800" y="407" font-size="11" text-anchor="middle" style="fill:var(--text-primary)">threshold</text>
+    <text x="800" y="421" font-size="9" text-anchor="middle" style="fill:var(--text-secondary)">cost-optimal</text>
+    <rect x="916" y="348" width="164" height="52" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="928" y="369" font-size="12" style="fill:var(--text-primary)">allow</text>
+    <text x="928" y="385" font-size="9.5" style="fill:var(--text-secondary)">97.5% of traffic</text>
+    <rect x="916" y="416" width="164" height="52" rx="4" style="fill:var(--surface-2);stroke:var(--series-1)"/>
+    <text x="928" y="437" font-size="12" style="fill:var(--text-primary)">review queue</text>
+    <text x="928" y="453" font-size="9.5" style="fill:var(--text-secondary)">2.51% of traffic</text>
+    <polyline points="172,408 196,408" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="352,408 376,408" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="540,408 564,408" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="712,408 724,408" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="876,408 896,408 896,374 916,374" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="876,408 896,408 896,442 916,442" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="814,130 814,186 664,186 664,244" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="690" y="182" font-size="9" text-anchor="middle" style="fill:var(--series-1)">writes</text>
+    <polyline points="664,316 664,352 638,352 638,374" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="606" y="332" font-size="9" text-anchor="middle" style="fill:var(--series-1)">reads</text>
+    <polyline points="274,374 274,316" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="282" y="332" font-size="9" text-anchor="start" style="fill:var(--series-1)">writes</text>
+    <polyline points="400,244 400,196 458,196 458,130" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="372" y="192" font-size="9" text-anchor="end" style="fill:var(--series-1)">reads</text>
+    <rect x="24" y="656" width="180" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="36" y="677" font-size="12" style="fill:var(--text-primary)">issuer files chargeback</text>
+    <text x="36" y="693" font-size="9.5" style="fill:var(--text-secondary)">external event</text>
+    <text x="36" y="708" font-size="9.5" style="fill:var(--series-1)">weeks later</text>
+    <rect x="228" y="656" width="168" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="240" y="677" font-size="12" style="fill:var(--text-primary)">dispute triage</text>
+    <text x="240" y="693" font-size="9.5" style="fill:var(--text-secondary)">invert the fraud score</text>
+    <text x="240" y="708" font-size="9.5" style="fill:var(--series-1)">contest / accept</text>
+    <rect x="420" y="656" width="168" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="432" y="677" font-size="12" style="fill:var(--text-primary)">draft payload</text>
+    <text x="432" y="693" font-size="9.5" style="fill:var(--text-secondary)">evidence assembled</text>
+    <text x="432" y="708" font-size="9.5" style="fill:var(--series-1)">action = draft</text>
+    <rect x="612" y="656" width="156" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--invalid)"/>
+    <text x="624" y="677" font-size="12" style="fill:var(--text-primary)">human approves</text>
+    <text x="624" y="693" font-size="9.5" style="fill:var(--text-secondary)">always required</text>
+    <rect x="792" y="656" width="180" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="804" y="677" font-size="12" style="fill:var(--text-primary)">Razorpay contest API</text>
+    <text x="804" y="693" font-size="9.5" style="fill:var(--text-secondary)">representment filed</text>
+    <rect x="996" y="656" width="110" height="68" rx="4" style="fill:var(--surface-2);stroke:var(--rule)"/>
+    <text x="1008" y="677" font-size="12" style="fill:var(--text-primary)">analyst</text>
+    <text x="1008" y="693" font-size="9.5" style="fill:var(--text-secondary)">works the queue</text>
+    <polyline points="204,690 228,690" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="396,690 420,690" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="588,690 612,690" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="768,690 792,690" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <rect x="908" y="560" width="180" height="60" rx="4" style="fill:var(--surface-2);stroke:var(--series-1)"/>
+    <text x="920" y="581" font-size="12" style="fill:var(--text-primary)">case file agent</text>
+    <text x="920" y="597" font-size="9.5" style="fill:var(--text-secondary)">graded, reversible action</text>
+    <polyline points="998,468 998,560" fill="none" style="stroke:var(--series-1)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="1004" y="530" font-size="9" text-anchor="start" style="fill:var(--series-1)">flagged ring</text>
+    <polyline points="1040,620 1040,656" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <polyline points="638,442 638,612 312,612 312,656" fill="none" style="stroke:var(--axis)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="470" y="608" font-size="9" text-anchor="middle" style="fill:var(--axis)">score, once a dispute exists</text>
+    <polyline points="900,316 900,500 504,500 504,656" fill="none" style="stroke:var(--axis)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a1)"/>
+    <text x="700" y="496" font-size="9" text-anchor="middle" style="fill:var(--axis)">documents</text>
+    <polyline points="24,690 14,690 14,280 196,280" fill="none" style="stroke:var(--invalid)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a1)"/>
+    <text x="28" y="474" font-size="9.5" style="fill:var(--invalid)">confirmed chargeback</text>
+    <text x="28" y="488" font-size="9.5" style="fill:var(--invalid)">re-enters ring history,</text>
+    <text x="28" y="502" font-size="9.5" style="fill:var(--invalid)">after a 30-day lag</text>
+  </g>
+</svg>

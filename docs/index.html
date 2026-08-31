@@ -156,6 +156,11 @@ figcaption b, .tcap b { font-family: var(--mono); font-size: .76rem; letter-spac
   text-transform: uppercase; color: var(--text-muted); font-weight: 500; margin-right: .4rem; }
 .tcap { font-size: .82rem; line-height: 1.5; color: var(--text-secondary); margin: 0 0 .8rem; max-width: 42rem; }
 .scroll { overflow-x: auto; }
+/* A dense architecture diagram cannot live inside the prose measure. This
+   breaks out of .wrap up to the viewport width, staying centred, and falls back
+   to horizontal scrolling when even that is not enough. */
+.bleed { width: min(94vw, 1240px); margin-left: calc(50% - min(47vw, 620px)); }
+@media (max-width: 1000px) { .bleed { width: 100% !important; margin-left: 0 !important; } }
 table { width: 100%; border-collapse: collapse; font-family: var(--mono);
   font-size: .8rem; font-variant-numeric: tabular-nums; min-width: 30rem; }
 th { text-align: right; font-weight: 500; font-size: .7rem; letter-spacing: .07em;
@@ -184,6 +189,13 @@ input[type=range] { flex: 1 1 16rem; min-width: 12rem; accent-color: var(--serie
 .seg button[aria-pressed="true"] { background: var(--text-primary); color: var(--surface); }
 .linkish { background: none; border: 0; padding: 0; font-family: var(--mono);
   font-size: .72rem; color: var(--series-1); cursor: pointer; text-decoration: underline; }
+.disclose {
+  font-family: var(--mono); font-size: .74rem; padding: .5rem .9rem; cursor: pointer;
+  background: var(--surface-2); color: var(--text-primary);
+  border: 1px solid var(--rule); border-radius: 3px;
+}
+.disclose:hover { background: var(--surface-3); }
+.pipe-note { font-family: var(--mono); font-size: .72rem; color: var(--text-muted); margin-left: .8rem; }
 
 /* ---- readout tiles ---- */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
@@ -203,6 +215,14 @@ input[type=range] { flex: 1 1 16rem; min-width: 12rem; accent-color: var(--serie
 .swatch { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
 
 svg { display: block; max-width: 100%; height: auto; }
+
+/* Wide two-panel diagrams become illegible when squeezed onto a phone, so each
+   one ships a stacked variant instead of being scaled down. */
+.narrow-only { display: none; }
+@media (max-width: 720px) {
+  .wide-only { display: none; }
+  .narrow-only { display: block; }
+}
 .tick { font-family: var(--mono); font-size: 10px; fill: var(--text-muted); }
 .axlabel { font-family: var(--mono); font-size: 10px; fill: var(--text-secondary);
   letter-spacing: .06em; text-transform: uppercase; }
@@ -261,15 +281,42 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <p>Card fraud is not a rounding error and it is not shrinking. What makes it worse than the sticker
       price is that a reversed payment costs a merchant several times the disputed amount: the goods are
       gone, the money is clawed back, a penalty is levied, and staff time is spent contesting it.</p>
-      <p>What follows is the measured case: §1 reports held-out detection performance against an
-      ablation with the ring layer removed; §2 turns the score into an operating point priced in rupees;
-      §3 breaks each of the project's honesty guarantees in turn to show what they cost; §4 shows the
-      review queue an analyst would actually work. §5 describes the dispute side, which is
-      parameterised rather than measured, and says so.</p>
+      <p>What follows is the measured case: §1 lays out the pipeline and where its leakage boundary sits; §2 reports held-out detection performance against an ablation with the ring layer removed; §3 turns the score into an operating point priced in rupees; §4 breaks each honesty guarantee in turn to show what it cost; §5 shows the review queue an analyst would work. §6 describes the dispute side, which is parameterised rather than measured, and says so. (&#167; is the section sign — &#167;3 reads &ldquo;section 3&rdquo;.)</p>
       <p>This page reports held-out performance for a ring-aware detector on the IEEE-CIS card-not-present
       dataset, whose ground truth is reported chargebacks. Every figure is generated from the artefacts in
       <code>reports/</code> by <code>scripts/build_site.py</code>, so this page cannot drift from the
       experiment that produced it.</p>
+
+      <figure style="margin:1.75rem 0 0">
+        <svg viewBox="0 0 520 190" role="img" aria-label="Card fraud losses worldwide, 33.41 billion dollars in 2024, projected to 41.06 billion by 2030.">
+          <g class="tick">
+            <line x1="52" y1="150" x2="500" y2="150" style="stroke:var(--axis)"/>
+            <line x1="52" y1="18" x2="52" y2="150" style="stroke:var(--axis)"/>
+            <line x1="52" y1="94" x2="500" y2="94" style="stroke:var(--grid)"/>
+            <line x1="52" y1="38" x2="500" y2="38" style="stroke:var(--grid)"/>
+            <text x="44" y="153" text-anchor="end">$0</text>
+            <text x="44" y="97" text-anchor="end">$25 bn</text>
+            <text x="44" y="41" text-anchor="end">$50 bn</text>
+
+            <!-- Two measured/published anchor points only. Intermediate years are
+                 not published here, so the connector is dashed and labelled
+                 "projected" rather than drawn as if it were a fitted series. -->
+            <line x1="120" y1="70" x2="430" y2="52" style="stroke:var(--series-1)"
+                  stroke-width="2" stroke-dasharray="5 4"/>
+            <circle cx="120" cy="70" r="5" style="fill:var(--series-1)"/>
+            <circle cx="430" cy="52" r="5" style="fill:var(--surface);stroke:var(--series-1)" stroke-width="2"/>
+
+            <text x="120" y="58" text-anchor="middle" style="fill:var(--text-primary)">$33.41 bn</text>
+            <text x="120" y="168" text-anchor="middle">2024 actual</text>
+            <text x="430" y="40" text-anchor="middle" style="fill:var(--text-primary)">$41.06 bn</text>
+            <text x="430" y="168" text-anchor="middle">2030 projected</text>
+            <text x="275" y="120" text-anchor="middle" style="fill:var(--text-muted)">$403.88 bn cumulative over ten years</text>
+          </g>
+        </svg>
+        <figcaption style="margin-top:.6rem"><b>Figure 1</b> Card fraud losses worldwide. Only the two
+        published points are plotted; the connector is dashed because the intervening years are a
+        projection, not a measured series. Source: Nilson Report.</figcaption>
+      </figure>
     </div>
 
     <aside class="context">
@@ -319,7 +366,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
   </div>
 
   <figure>
-    <svg viewBox="0 0 860 310" role="img" aria-label="Ordinary customers each transact from their own address over weeks. Ring 76963 runs four different cards through one shared device, making five transactions of exactly 44,000 rupees within nine hours.">
+    <svg class="wide-only" viewBox="0 0 860 310" role="img" aria-label="Ordinary customers each transact from their own address over weeks. Ring 76963 runs four different cards through one shared device, making five transactions of exactly 44,000 rupees within nine hours.">
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
           <polygon points="0,1 9,5 0,9" style="fill:var(--axis)"/>
@@ -379,15 +426,104 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <text x="400" y="238" class="tick" style="fill:var(--invalid)">5 transactions of exactly ₹44,000 — amount variability 0.000</text>
       <text x="400" y="256" class="tick" style="fill:var(--invalid)">4 cards, 0.37 days, ₹220,000 total</text>
     </svg>
-    <figcaption><b>Figure 1</b> The detection premise, drawn from an actual ring in the held-out
-    period. Individually each transaction on the right is unremarkable: a plausible amount, a valid
-    card, a real address. Only the shape gives the operator away — and once one member is flagged, the
-    other three are known before they cost anything.</figcaption>
+    <svg class="narrow-only" viewBox="0 0 360 480" role="img" aria-label="Ordinary customers each transact from their own device. Ring 76963 runs four different cards through one shared device, five transactions of exactly 44,000 rupees within nine hours.">
+      <defs>
+        <marker id="ahn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <polygon points="0,1 9,5 0,9" style="fill:var(--axis)"/>
+        </marker>
+        <marker id="ahrn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <polygon points="0,1 9,5 0,9" style="fill:var(--invalid)"/>
+        </marker>
+      </defs>
+
+      <text x="0" y="12" class="axlabel">ordinary traffic</text>
+      <line x1="0" y1="20" x2="360" y2="20" style="stroke:var(--rule)"/>
+      <g class="tick">
+        <rect x="0" y="34" width="78" height="26" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="39" y="51" text-anchor="middle" style="fill:var(--text-secondary)">card P</text>
+        <rect x="0" y="70" width="78" height="26" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="39" y="87" text-anchor="middle" style="fill:var(--text-secondary)">card Q</text>
+        <rect x="0" y="106" width="78" height="26" rx="3" fill="none" style="stroke:var(--axis)"/>
+        <text x="39" y="123" text-anchor="middle" style="fill:var(--text-secondary)">card R</text>
+        <line x1="84" y1="47"  x2="126" y2="47"  style="stroke:var(--axis)" marker-end="url(#ahn)"/>
+        <line x1="84" y1="83"  x2="126" y2="83"  style="stroke:var(--axis)" marker-end="url(#ahn)"/>
+        <line x1="84" y1="119" x2="126" y2="119" style="stroke:var(--axis)" marker-end="url(#ahn)"/>
+        <text x="134" y="51"  style="fill:var(--text-secondary)">own device</text>
+        <text x="134" y="87"  style="fill:var(--text-secondary)">own device</text>
+        <text x="134" y="123" style="fill:var(--text-secondary)">own device</text>
+        <text x="0" y="152" style="fill:var(--text-muted)">One card each, weeks apart.</text>
+        <text x="0" y="168" style="fill:var(--text-muted)">Nothing links them.</text>
+      </g>
+
+      <line x1="0" y1="196" x2="360" y2="196" style="stroke:var(--rule)" stroke-dasharray="3 5"/>
+
+      <text x="0" y="224" class="axlabel" style="fill:var(--invalid)">ring 76963 — observed</text>
+      <line x1="0" y1="232" x2="360" y2="232" style="stroke:var(--invalid)" opacity=".45"/>
+      <g class="tick">
+        <rect x="0"  y="248" width="76" height="24" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="38" y="264" text-anchor="middle" style="fill:var(--invalid)">card A</text>
+        <rect x="92" y="248" width="76" height="24" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="130" y="264" text-anchor="middle" style="fill:var(--invalid)">card B</text>
+        <rect x="184" y="248" width="76" height="24" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="222" y="264" text-anchor="middle" style="fill:var(--invalid)">card C</text>
+        <rect x="276" y="248" width="76" height="24" rx="3" fill="none" style="stroke:var(--invalid)"/>
+        <text x="314" y="264" text-anchor="middle" style="fill:var(--invalid)">card D</text>
+
+        <path d="M38 276 L38 296 L176 296" fill="none" style="stroke:var(--invalid)" opacity=".8"/>
+        <path d="M130 276 L130 296"        fill="none" style="stroke:var(--invalid)" opacity=".8"/>
+        <path d="M222 276 L222 296"        fill="none" style="stroke:var(--invalid)" opacity=".8"/>
+        <path d="M314 276 L314 296 L176 296" fill="none" style="stroke:var(--invalid)" opacity=".8"/>
+        <line x1="176" y1="296" x2="176" y2="322" style="stroke:var(--invalid)" marker-end="url(#ahrn)"/>
+
+        <rect x="88" y="330" width="176" height="34" rx="3" style="fill:var(--surface-2);stroke:var(--invalid)"/>
+        <text x="176" y="352" text-anchor="middle" style="fill:var(--invalid)">Z965 Build/NMF26V</text>
+        <text x="176" y="382" text-anchor="middle" style="fill:var(--text-muted)">one shared device</text>
+
+        <text x="0" y="418" style="fill:var(--invalid)">5 transactions of exactly ₹44,000</text>
+        <text x="0" y="436" style="fill:var(--invalid)">amount variability 0.000</text>
+        <text x="0" y="454" style="fill:var(--invalid)">4 cards, 0.37 days, ₹220,000 total</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2</b> The detection premise, drawn from an actual ring in the held-out
+    period. Taken one at a time, every transaction in the ring is unremarkable: a plausible amount, a
+    valid card, a real address. Only the shape gives the operator away — and once one member is
+    flagged, the other three are known before they cost anything.</figcaption>
   </figure>
 </section>
 
+
+<section id="pipeline">
+  <h2><span class="sn">1</span> How it works</h2>
+  <div class="col">
+    <p>Two execution planes, not one pipeline. Training runs on a schedule over history; scoring runs
+    per transaction the moment it arrives. They share state and, critically, share the same feature
+    code — <code>features/causal.py</code> is the identical module in both, which is why performance
+    measured offline means anything online.</p>
+    <p>
+      <button class="disclose" id="pipe-toggle" aria-expanded="false" aria-controls="pipe-body">
+        Show the architecture
+      </button>
+      <span class="pipe-note">two planes, shared state, and the chargeback feedback loop</span>
+    </p>
+  </div>
+
+  <div id="pipe-body" hidden>
+  <figure class="bleed" style="width:min(94vw,1240px);margin-left:calc(50% - min(47vw,620px))">
+    <div class="scroll" id="arch-host">
+      <p class="tick" style="padding:1rem 0">loading diagram…</p>
+    </div>
+    <figcaption><b>Figure 3</b> System architecture. Two execution planes — offline training over
+    history, and online scoring per transaction — share one entity graph, one model artifact, and the
+    <em>same</em> feature module, which is what makes the offline metrics predictive of online
+    behaviour. The red path is the feedback loop: a confirmed chargeback re-enters the ring's fraud
+    history, but only after the reporting lag, which is why that feature can be used honestly. The
+    dispute branch is triggered by the issuer, not by the model, and terminates at a human.</figcaption>
+  </figure>
+  </div>
+</section>
+
 <section id="results">
-  <h2><span class="sn">1</span> Held-out performance</h2>
+  <h2><span class="sn">2</span> Held-out performance</h2>
   <div class="col">
     <p>Evaluated on transactions from a period strictly later than all training data, with a 7-day
     embargo at the boundary. The ablation column retrains the identical pipeline with every ring and
@@ -401,7 +537,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 </section>
 
 <section id="threshold">
-  <h2><span class="sn">2</span> Choosing the operating point</h2>
+  <h2><span class="sn">3</span> Choosing the operating point</h2>
   <div class="col">
     <p>Precision and recall trade against each other, so the threshold is not a modelling choice — it is
     an economic one. Both mistakes are priced: a missed fraud costs the goods, the amount and a penalty
@@ -423,7 +559,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
   <figure>
     <div class="legend"><span><i class="swatch" style="background:var(--series-1)"></i>Net saving</span></div>
     <div id="fig1a"></div>
-    <figcaption><b>Figure 2a</b> Net saving against the share of traffic flagged for review, in rupees,
+    <figcaption><b>Figure 4a</b> Net saving against the share of traffic flagged for review, in rupees,
     relative to a no-model baseline of approving everything. The vertical axis is clipped; the curve
     continues to <span class="num" id="worst-loss"></span> when every transaction is flagged. Log
     horizontal axis.</figcaption>
@@ -435,16 +571,16 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <span><i class="swatch" style="background:var(--series-2)"></i>Recall</span>
     </div>
     <div id="fig1b"></div>
-    <figcaption><b>Figure 2b</b> Precision and recall against the same horizontal axis. Both are unitless
+    <figcaption><b>Figure 4b</b> Precision and recall against the same horizontal axis. Both are unitless
     proportions, so they share one scale.</figcaption>
   </figure>
 
-  <p><button class="linkish" id="toggle-table" aria-expanded="false">Show Figure 2 as a table</button></p>
+  <p><button class="linkish" id="toggle-table" aria-expanded="false">Show Figure 4 as a table</button></p>
   <div class="scroll" id="curve-table" hidden></div>
 </section>
 
 <section id="honesty">
-  <h2><span class="sn">3</span> What the honesty costs</h2>
+  <h2><span class="sn">4</span> What the honesty costs</h2>
   <div class="col">
     <p>Claiming a leakage boundary is worth nothing unless the gap is measured. Each guarantee was broken
     in turn, changing nothing else. The variants below are <strong>not results</strong> — they are the
@@ -466,7 +602,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
       <span><i class="swatch" style="background:var(--invalid)"></i>Invalid — assumption cannot hold</span>
     </div>
     <div id="fig2"></div>
-    <figcaption><b>Figure 3</b> PR-AUC and net saving under each variant, as separate panels because the
+    <figcaption><b>Figure 5</b> PR-AUC and net saving under each variant, as separate panels because the
     two quantities share no scale. Either shortcut lifts PR-AUC from 0.60 to roughly 0.96 and nearly
     triples the reported saving.</figcaption>
   </figure>
@@ -481,7 +617,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 </section>
 
 <section id="rings">
-  <h2><span class="sn">4</span> Ring review queue</h2>
+  <h2><span class="sn">5</span> Ring review queue</h2>
   <div class="col">
     <p>A ranked list of transaction identifiers is not a product; the reviewer still has to reconstruct
     what happened. Each ring below carries a generated case file stating what links the accounts, what the
@@ -496,7 +632,7 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 
 
 <section id="dispute">
-  <h2><span class="sn">5</span> Disputes that land anyway</h2>
+  <h2><span class="sn">6</span> Disputes that land anyway</h2>
   <div class="col">
     <p>Detection is never perfect. When a chargeback does arrive, a merchant can contest it — and
     published figures put the gross win rate at 44.6% but net recovery at 10.7%. That gap is the whole
@@ -529,14 +665,14 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 </section>
 
 <section id="limits">
-  <h2><span class="sn">6</span> Limitations</h2>
+  <h2><span class="sn">7</span> Limitations</h2>
   <div class="col">
     <ul id="limits-list"></ul>
   </div>
 </section>
 
 <section id="repro">
-  <h2><span class="sn">7</span> Reproduction</h2>
+  <h2><span class="sn">8</span> Reproduction</h2>
   <div class="col">
     <p>Every number on this page is regenerated by the commands below. The page reads
     <code>docs/data.json</code>, which <code>build_site.py</code> writes from <code>reports/</code>.</p>
@@ -739,17 +875,29 @@ function moveMarkers(r) {
 function drawAblation(active) {
   const host = document.getElementById("fig2"); host.textContent = "";
   const keys = ["honest", "lag0", "whole_frame"];
-  const w = 860, h = 240, panelW = (w - 40) / 2;
+  /* Side by side on a wide screen, stacked on a phone. Scaling two panels down
+     to 360px makes every bar label unreadable. */
+  const narrow = window.innerWidth < 720;
+  const w = narrow ? 380 : 860;
+  const h = narrow ? 460 : 240;
+  const panelW = narrow ? w : (w - 40) / 2;
   const svg = frame(w, h, "PR-AUC and net saving under each ablation variant");
-  const panels = [
-    { x: 0, title: "PR-AUC", max: 1.0, get: k => D.ablation[k].pr_auc, fmt: v => v.toFixed(3) },
-    { x: panelW + 40, title: "net saving", max: 6e7, get: k => D.ablation[k].net_saving_inr, fmt: F.inrShort }
-  ];
+  const panels = narrow
+    ? [
+        { x: 0, y: 0, title: "PR-AUC", max: 1.0, get: k => D.ablation[k].pr_auc, fmt: v => v.toFixed(3) },
+        { x: 0, y: 230, title: "net saving", max: 6e7, get: k => D.ablation[k].net_saving_inr, fmt: F.inrShort }
+      ]
+    : [
+        { x: 0, y: 0, title: "PR-AUC", max: 1.0, get: k => D.ablation[k].pr_auc, fmt: v => v.toFixed(3) },
+        { x: panelW + 40, y: 0, title: "net saving", max: 6e7, get: k => D.ablation[k].net_saving_inr, fmt: F.inrShort }
+      ];
+  const panelH = narrow ? 230 : h;
   panels.forEach(p => {
-    const x0 = p.x + 58, plotW = panelW - 66, plotH = h - 78;
-    const t = S("text", { x: p.x + 4, y: 14, class: "axlabel" }); t.textContent = p.title; svg.append(t);
+    const oy = p.y;
+    const x0 = p.x + 58, plotW = panelW - 66, plotH = panelH - 78;
+    const t = S("text", { x: p.x + 4, y: oy + 14, class: "axlabel" }); t.textContent = p.title; svg.append(t);
     for (let i = 0; i <= 4; i++) {
-      const val = p.max * i / 4, y = 26 + plotH - (val / p.max) * plotH;
+      const val = p.max * i / 4, y = oy + 26 + plotH - (val / p.max) * plotH;
       svg.append(S("line", { x1: x0, x2: x0 + plotW, y1: y, y2: y, stroke: "var(--grid)", "stroke-width": 1 }));
       const lt = S("text", { x: x0 - 7, y: y + 3, "text-anchor": "end", class: "tick" });
       lt.textContent = p.fmt(val); svg.append(lt);
@@ -759,18 +907,19 @@ function drawAblation(active) {
       const v = p.get(k);
       const cx = x0 + plotW * (i + 0.5) / keys.length;
       const bh = Math.max((v / p.max) * plotH, 1);
+      const by = oy + 26 + plotH - bh;
       const invalid = k !== "honest";
       const isActive = k === active;
       svg.append(S("rect", {
-        x: cx - bw / 2, y: 26 + plotH - bh, width: bw, height: bh, rx: 3,
+        x: cx - bw / 2, y: by, width: bw, height: bh, rx: 3,
         fill: invalid ? "var(--invalid)" : "var(--series-1)",
         opacity: isActive ? 1 : 0.55,
         stroke: "var(--surface)", "stroke-width": 2
       }));
-      const vl = S("text", { x: cx, y: 26 + plotH - bh - 6, "text-anchor": "middle",
+      const vl = S("text", { x: cx, y: by - 6, "text-anchor": "middle",
         class: "tick", fill: "var(--text-primary)" });
       vl.textContent = p.fmt(v); svg.append(vl);
-      const nl = S("text", { x: cx, y: 26 + plotH + 15, "text-anchor": "middle", class: "tick" });
+      const nl = S("text", { x: cx, y: oy + 26 + plotH + 15, "text-anchor": "middle", class: "tick" });
       nl.textContent = k; svg.append(nl);
     });
   });
@@ -870,11 +1019,37 @@ function render() {
     el("td", {}, F.n(r.precision, 3)), el("td", {}, F.n(r.recall, 3)),
     el("td", {}, F.int(r.fp)), el("td", {}, F.inr(r.net_saving_inr))])));
   tbl.append(ctb); ct.append(tbl);
+  const pt = document.getElementById("pipe-toggle"), pb = document.getElementById("pipe-body");
+  let archLoaded = false;
+  const loadArch = () => {
+    if (archLoaded) return;
+    archLoaded = true;
+    /* Inlined rather than used as <img src>, so the SVG inherits the page's CSS
+       custom properties and follows the light/dark theme. An external <img>
+       cannot see them and would render with unresolved var() colours. */
+    fetch("architecture.svg").then(r => r.text()).then(t => {
+      const host = document.getElementById("arch-host");
+      host.innerHTML = t;
+      const svg = host.querySelector("svg");
+      if (svg) { svg.style.minWidth = "1120px"; svg.removeAttribute("width"); }
+    }).catch(() => {
+      document.getElementById("arch-host").innerHTML =
+        '<p class="err">Could not load architecture.svg.</p>';
+    });
+  };
+  pt.addEventListener("click", () => {
+    const open = pb.hidden;
+    pb.hidden = !open;
+    pt.setAttribute("aria-expanded", String(open));
+    pt.textContent = open ? "Hide the architecture" : "Show the architecture";
+    if (open) { loadArch(); drawAblation(active); }   // re-measure once visible
+  });
+
   const tt = document.getElementById("toggle-table");
   tt.addEventListener("click", () => {
     const open = ct.hidden;
     ct.hidden = !open; tt.setAttribute("aria-expanded", String(open));
-    tt.textContent = open ? "Hide the table" : "Show Figure 2 as a table";
+    tt.textContent = open ? "Hide the table" : "Show Figure 4 as a table";
   });
 
   // Ablation
@@ -909,6 +1084,11 @@ function render() {
     drawAblation(active);
   };
   paintAb();
+  let rt;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => { drawMoney(); drawPR(); drawAblation(active); paint(+slider.value); }, 150);
+  });
 
   // Ring queue
   const t3 = document.getElementById("t-rings");
