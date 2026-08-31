@@ -137,10 +137,3 @@ def structured(
         return output_model.model_validate(json.loads(content))
     except (json.JSONDecodeError, ValueError) as exc:
         raise LLMError(f"{model} returned unparseable output: {exc}") from exc
-
-
-def last_usage_note(response) -> str:
-    u = getattr(response, "usage", None)
-    if not u:
-        return ""
-    return f"{u.prompt_tokens} in / {u.completion_tokens} out"

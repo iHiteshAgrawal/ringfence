@@ -53,20 +53,3 @@ def resolve(df: pd.DataFrame) -> pd.DataFrame:
     df = add_card_anchor(df)
     df["client_id"] = build_client_id(df)
     return df
-
-
-def client_summary(df: pd.DataFrame) -> pd.DataFrame:
-    """Per-client aggregates. Used both as features and for ring scoring."""
-    g = df.groupby("client_id", observed=True)
-    out = pd.DataFrame({
-        "n_tx": g.size(),
-        "total_amt": g["TransactionAmt"].sum(),
-        "mean_amt": g["TransactionAmt"].mean(),
-        "max_amt": g["TransactionAmt"].max(),
-        "first_dt": g[config.TIME_COL].min(),
-        "last_dt": g[config.TIME_COL].max(),
-    })
-    out["lifespan_days"] = (out["last_dt"] - out["first_dt"]) / 86400.0
-    # Burstiness: many transactions in a short window is a classic ring tell.
-    out["tx_per_day"] = out["n_tx"] / out["lifespan_days"].clip(lower=1.0)
-    return out

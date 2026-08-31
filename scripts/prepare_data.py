@@ -24,6 +24,7 @@ from rich.console import Console
 from ringfence import config
 from ringfence.data.load import load_raw
 from ringfence.features.pipeline import prepare, to_matrix
+from ringfence.features.select import VBlockReducer
 
 console = Console()
 
@@ -55,6 +56,17 @@ def main() -> int:
     )
     del df
     gc.collect()
+
+    # Fit the V-block reduction here, on TRAIN ONLY, and persist the choice.
+    # run_experiment.py reads this file; without it, training silently keeps all
+    # 446 features -- the configuration that gets OOM-killed on a 16GB machine.
+    # It used to be produced by an ad-hoc script that was never committed, so a
+    # fresh clone could not reproduce the documented run.
+    reducer = VBlockReducer().fit(data.train)
+    vsel_path = config.PROCESSED / f"vselect_{args.tag}.json"
+    vsel_path.write_text(json.dumps(
+        {"keep": reducer.keep_, "drop": reducer.columns_to_drop()}, indent=1))
+    console.log(f"wrote {vsel_path.name}: dropping {len(reducer.columns_to_drop())} V columns")
 
     meta = {
         "feature_names": data.feature_names,

@@ -15,3 +15,4 @@ reports/figures/*.png
 .pytest_cache/
 .ruff_cache/
 models/
+reports/*.log
