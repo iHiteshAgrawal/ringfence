@@ -29,15 +29,20 @@ Ringfence does both halves:
 
 ## Why the numbers here can be believed
 
-Fraud results are easy to fake by accident. Three deliberate choices:
+Fraud results are easy to fake by accident. Four deliberate choices:
 
 - **Real labels.** [IEEE-CIS](https://www.kaggle.com/competitions/ieee-fraud-detection/data)
   (590,540 real card-not-present transactions, 3.5% fraud rate). Its ground truth
   *is* reported chargebacks — the exact loss class this track is about.
 - **Temporal split with an embargo.** Never random. A random split scatters one
   ring across both sides of the boundary and lets the model memorise it. We also
-  drop 7 days adjacent to the cutoff, because in production chargeback labels
-  arrive with a reporting lag you would not have at scoring time.
+  drop 7 days adjacent to the cutoff, because at scoring time the most recent
+  labels do not yet exist.
+- **Causal ring membership, and a 30-day label lag.** A transaction's ring is
+  decided by replaying history in time order, so a *later* transaction can never
+  determine which ring an earlier one belongs to. And "prior frauds in this ring"
+  only counts frauds that would already have been *reported* — a chargeback is
+  not known when it happens.
 - **Cost-weighted metrics, not AUC-ROC.** At 3.5% prevalence AUC-ROC is
   dominated by the majority class and hides false-positive cost. We report
   PR-AUC, precision@k at realistic review capacity, recall at a fixed FP budget,
@@ -57,6 +62,33 @@ On **118,108 held-out transactions**, from a period strictly later than all trai
 Against a ₹59,770,222 baseline loss, the cost-optimal setting recovers **30.9%**
 while flagging 2.51% of traffic. The ring layer is worth ₹5.6M of that.
 
+### What the honesty costs
+
+Claiming a leakage boundary is worth nothing unless the gap is measured. Each
+guarantee was broken in turn, changing nothing else:
+
+| Variant | Assumes | PR-AUC | ₹ saved |
+|---|---|---:|---:|
+| **honest** | causal features, 30-day lag *(shipped)* | **0.5986** | **18,476,797** |
+| `lag0` | chargebacks known instantly | 0.9691 | 52,814,554 |
+| `whole_frame` | ring stats over the whole dataset | 0.9612 | 52,264,200 |
+
+Either shortcut lifts PR-AUC from 0.60 to ~0.96 and **nearly triples the money**.
+Those rows are not results — they are the size of the overstatement avoided.
+
+### The dispute agent
+
+Given a chargeback, it decides whether the case is worth fighting and drafts the
+Razorpay payload. There is no public data on dispute *outcomes*, so rather than
+invent labels it **inverts the detector**: once a chargeback is filed, a low
+fraud score means the transaction looked legitimate on every signal yet is being
+disputed — the friendly-fraud signature. A high score means the card really was
+stolen, and the system refuses to contest a genuine victim's claim.
+
+Both agents run on `google/gemini-3.7-flash` via OpenRouter, chosen across the
+332 models offering schema-constrained output. A generated analyst case file
+costs a measured **₹0.13**.
+
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design, the leakage
 boundary, and an honest limitations section.
 
@@ -64,18 +96,30 @@ boundary, and an honest limitations section.
 
 ```bash
 uv venv --python 3.11 && uv pip install -e .
-python scripts/download_data.py                  # needs Kaggle credentials
-python scripts/prepare_data.py  --tag main
-python scripts/run_experiment.py --tag main
-pytest                                           # 56 tests
+pytest                                    # 57 tests, no data needed
+
+ringfence data download                   # needs Kaggle credentials in .env
+ringfence data prepare --tag main         # ~90s
+ringfence train --tag main                # ~35s
+ringfence status                          # what is built
+```
+
+Reproduce the two ablations:
+
+```bash
+ringfence train --tag noring --data-tag main --no-ring-features
+ringfence ablate --force                  # ~6 min; omit --force to read cached
 ```
 
 The agent layer runs against real rings from the held-out set:
 
 ```bash
-python scripts/demo_agent.py --offline           # no API key needed
-python scripts/demo_agent.py                     # needs OPENROUTER_API_KEY
+ringfence agent --offline                 # no API key needed
+ringfence agent                           # needs OPENROUTER_API_KEY in .env
 ```
+
+Every command wraps a script in `scripts/`, which stay runnable directly —
+that is how the numbers above were produced.
 
 ## Scope and safety
 
@@ -91,4 +135,4 @@ offense-capable is disqualified."* This project takes that seriously.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
