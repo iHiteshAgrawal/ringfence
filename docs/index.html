@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+  // Runs before first paint, so there is no flash of the wrong theme.
+  try {
+    var t = localStorage.getItem("rf-theme");
+    document.documentElement.setAttribute("data-theme", t || "light");
+  } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ringfence — Results</title>
 <meta name="description" content="Abuse-ring detection for card-not-present fraud: held-out results, cost-optimal thresholding, and a measured leakage ablation.">
@@ -269,6 +276,8 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 </style>
 </head>
 <body>
+<button class="themer" id="themer" type="button" aria-label="Switch colour theme">theme</button>
+
 <div class="wrap">
 
 <header class="top">
@@ -640,10 +649,10 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
 <section id="dispute">
   <h2><span class="sn">6</span> Disputes that land anyway</h2>
   <div class="col">
-    <p>Detection is never perfect. When a chargeback does arrive, a merchant can contest it — and
+    <p id="d-gap">Detection is never perfect. When a chargeback does arrive, a merchant can contest it — and
     published figures put the gross win rate at 44.6% but net recovery at 10.7%. That gap is the whole
     argument for triage: contesting everything is what produces it.</p>
-    <p>There is no public dataset of dispute <em>outcomes</em>, so rather than train a win model on
+    <p id="d-invert">There is no public dataset of dispute <em>outcomes</em>, so rather than train a win model on
     invented labels, the detector is <strong>inverted</strong>. Conditioned on a chargeback having been
     filed:</p>
   </div>
@@ -651,15 +660,15 @@ ul { padding-left: 1.1rem; } li { margin-bottom: .5rem; }
   <div class="scroll"><table>
     <thead><tr><th>Fraud score</th><th>Reading</th><th>Action</th></tr></thead>
     <tbody>
-      <tr><td>High</td><td style="text-align:left">The card really was stolen; the cardholder is a
+      <tr id="d-high"><td>High</td><td style="text-align:left">The card really was stolen; the cardholder is a
         victim telling the truth</td><td style="text-align:left">Accept — unwinnable, and fighting a
         real victim is wrong</td></tr>
-      <tr><td>Low</td><td style="text-align:left">The transaction looked legitimate on every signal yet
+      <tr id="d-low"><td>Low</td><td style="text-align:left">The transaction looked legitimate on every signal yet
         is disputed — the friendly-fraud signature</td><td style="text-align:left">Contest</td></tr>
     </tbody>
   </table></div>
   <div class="col">
-    <p>So a model validated on real labels does the work, and the ethical constraint falls out of the
+    <p id="d-draft">So a model validated on real labels does the work, and the ethical constraint falls out of the
     same signal. Where the decision is to contest, an agent drafts the Razorpay evidence payload; every
     document id is checked against the merchant's actual inventory <em>in code</em>, because a
     hallucinated id is not a formatting bug but a fabricated evidence claim sent to a bank. The payload
@@ -704,6 +713,19 @@ python scripts/build_site.py --with-casefiles</pre>
 </div>
 
 <script>
+(() => {
+  const root = document.documentElement, btn = document.getElementById("themer");
+  const label = () => { btn.textContent =
+    root.getAttribute("data-theme") === "dark" ? "light" : "dark"; };
+  label();
+  btn.addEventListener("click", () => {
+    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("rf-theme", next); } catch (e) { /* private mode */ }
+    label();
+  });
+})();
+
 const REPO = "https://github.com/iHiteshAgrawal/ringfence";
 /* Paths named in the prose, mapped to their location in the repo. Kept explicit
    rather than guessed from the string, so a renamed file produces a visibly
@@ -1186,6 +1208,9 @@ function render() {
     `<strong>${F.pct(d.ring_diagnostics.clients_in_multi_rings / d.ring_diagnostics.n_clients)} of cards fall in a multi-card ring.</strong>
      For the rest, Ringfence contributes little beyond conventional features. This detects organised abuse,
      not lone-actor fraud.`,
+    `<strong>The dispute agent's evidence documents are illustrative.</strong> IEEE-CIS contains no
+     merchant document store, so the triage economics and the provenance checks are real, but the
+     documents they operate on are constructed.`,
     `<strong>The cost model is parameterised, not measured.</strong> Chargeback fees and churn multipliers vary by
      merchant category. The method is the contribution; the constants are defaults and are listed in
      <code>config.py</code>.`,

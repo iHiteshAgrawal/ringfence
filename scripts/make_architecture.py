@@ -42,8 +42,9 @@ def esc(t: str) -> str:
     return t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def lane(x, y, w, h, label, tone=MUT):
-    p.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" '
+def lane(x, y, w, h, label, tone=MUT, lid=None):
+    ident = f' id="{lid}"' if lid else ""
+    p.append(f'<rect{ident} x="{x}" y="{y}" width="{w}" height="{h}" rx="6" '
              f'fill="none" style="stroke:{RULE}" stroke-dasharray="2 4"/>')
     p.append(f'<text x="{x + 12}" y="{y + 18}" font-size="10" letter-spacing="1.2" '
              f'style="fill:{tone}">{esc(label)}</text>')
@@ -98,10 +99,12 @@ def diamond(cx, cy, rw, rh, title, sub=None):
         p.append(f'<text x="{cx}" y="{cy + 13}" font-size="9" text-anchor="middle" style="fill:{SUB}">{esc(sub)}</text>')
 
 
-def arrow(pts, label=None, dashed=False, color=LINE, lx=None, ly=None, anchor="middle"):
+def arrow(pts, label=None, dashed=False, color=LINE, lx=None, ly=None,
+          anchor="middle", aid=None):
     d = " ".join(f"{x},{y}" for x, y in pts)
     dash = ' stroke-dasharray="5 4"' if dashed else ""
-    p.append(f'<polyline points="{d}" fill="none" style="stroke:{color}" stroke-width="1.4"'
+    ident = f' id="{aid}"' if aid else ""
+    p.append(f'<polyline{ident} points="{d}" fill="none" style="stroke:{color}" stroke-width="1.4"'
              f'{dash} marker-end="url(#a1)"/>')
     if label:
         x = lx if lx is not None else (pts[0][0] + pts[-1][0]) / 2
@@ -112,9 +115,9 @@ def arrow(pts, label=None, dashed=False, color=LINE, lx=None, ly=None, anchor="m
 
 # ---------------------------------------------------------------- lanes
 # Each lane reserves 36px of head-room so its label never sits under a node.
-lane(8, 24, W - 16, 176, "OFFLINE  \u00b7  RUNS ON A SCHEDULE OVER HISTORY")
-lane(8, 210, W - 16, 116, "SHARED STATE  \u00b7  WRITTEN ONLINE, READ BY BOTH")
-lane(8, 336, W - 16, 176, "ONLINE  \u00b7  PER TRANSACTION")
+lane(8, 24, W - 16, 176, "OFFLINE  \u00b7  RUNS ON A SCHEDULE OVER HISTORY", lid="lane-offline")
+lane(8, 210, W - 16, 116, "SHARED STATE  \u00b7  WRITTEN ONLINE, READ BY BOTH", lid="lane-state")
+lane(8, 336, W - 16, 176, "ONLINE  \u00b7  PER TRANSACTION", lid="lane-online")
 lane(8, 522, W - 16, 244, "HUMAN  &  EXTERNAL PARTIES", MUT)
 
 # ---------------------------------------------------------------- offline
@@ -193,7 +196,7 @@ arrow([(900, SY + 72), (900, 500), (504, 500), (504, HY)], "documents",
 # ---------------------------------------------------------------- feedback
 # Routed down the far-left gutter so it crosses no node.
 arrow([(24, HY + 34), (14, HY + 34), (14, SY + 36), (196, SY + 36)],
-      None, dashed=True, color=BAD)
+      None, dashed=True, color=BAD, aid="feedback-loop")
 p.append(f'<text x="28" y="474" font-size="9.5" style="fill:{BAD}">confirmed chargeback</text>')
 p.append(f'<text x="28" y="488" font-size="9.5" style="fill:{BAD}">re-enters ring history,</text>')
 p.append(f'<text x="28" y="502" font-size="9.5" style="fill:{BAD}">after a 30-day lag</text>')

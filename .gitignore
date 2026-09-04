@@ -16,3 +16,6 @@ reports/figures/*.png
 .ruff_cache/
 models/
 reports/*.log
+
+# working files for the pitch video: scenes, TTS, renders
+archive/

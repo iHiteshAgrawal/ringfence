@@ -32,6 +32,23 @@ Ringfence does both halves:
    [contest-a-dispute](https://razorpay.com/docs/api/disputes/contest/) payload
    with the evidence bundle assembled and a written summary.
 
+## Architecture
+
+![Ringfence architecture](docs/architecture.png)
+
+Two execution planes. Training runs on a schedule over history; scoring runs per
+transaction the moment it arrives. They share one entity graph, one model
+artifact, and — critically — the **same feature module**, which is what makes the
+offline metrics predictive of online behaviour.
+
+The red path is the feedback loop: a confirmed chargeback re-enters the ring's
+fraud history, but only after the reporting lag. That delay is why the feature
+can be used honestly. The dispute branch is triggered by the issuer, not by the
+model, and terminates at a human.
+
+Every node in the [interactive version](https://hiteshkrgupta.github.io/projects/ringfence/)
+links to the file that implements it.
+
 ## Why the numbers here can be believed
 
 Fraud results are easy to fake by accident. Four deliberate choices:
@@ -139,9 +156,8 @@ python -m http.server --directory docs    # preview at localhost:8000
 
 Nothing on that page is hand-written or simulated. `scripts/build_site.py`
 regenerates `docs/data.json` from `reports/` and `scripts/make_architecture.py`
-regenerates the architecture diagram, so the page cannot drift from the
-experiment that produced it. Every node in the architecture diagram links to the
-file that implements it.
+regenerates the architecture diagram from code, so the page cannot drift from
+the experiment that produced it.
 
 ## Scope and safety
 
